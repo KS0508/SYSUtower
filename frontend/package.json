@@ -11,7 +11,9 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@quasar/cli": "^1.0.0-beta.5",
     "@quasar/extras": "^1.0.0",
+    "@vue/cli": "^3.7.0",
     "quasar": "^1.0.0-beta.0",
     "vue-i18n": "^7.3.3"
   },
