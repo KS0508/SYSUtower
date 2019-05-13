@@ -1,8 +1,7 @@
 import Vue from 'vue';
 
-import Beufy from 'buefy';
-import 'buefy/dist/buefy.css';
-import '@mdi/font/css/materialdesignicons.min.css';
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
 
 import App from './App.vue';
 import router from './router';
@@ -10,7 +9,7 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
-Vue.use(Beufy);
+Vue.use(Antd);
 
 new Vue({
   router,
