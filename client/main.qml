@@ -8,13 +8,14 @@ import com.eyllanesc.org 1.0
 Window
 {
     visible: true
-    width: 640
-    height: 480
+    visibility: "Maximized"
+    width: 1280
+    height: 720
     title: qsTr("SYSU Tower")
 
     WebView
     {
-        url: "https://github.com/KS0508/SYSUtower"
+        url: "qrc:/index.html"
         anchors.fill: parent
     }
 
@@ -23,7 +24,8 @@ Window
         id: someObject
         property string someProperty: "prop"
         WebChannel.id: "core"
-        function receiveText(text){
+        function receiveText(text)
+        {
             console.log("receiveText: ", text)
         }
         signal sendText(string text)
@@ -58,7 +60,7 @@ Window
     // testing
     Timer
     {
-        interval: 500
+        interval: 3000
         running: true
         repeat: true
         onTriggered: someObject.sendText(Qt.formatDateTime(new Date(), "yyyy/MM/dd HH:mm:ss") + " from QML")
