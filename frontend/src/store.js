@@ -16,7 +16,10 @@ export default new Vuex.Store({
             title: '数据科学与计算机学院计算机类（计科、网工、信安）2019届本科生毕业论文答辩通知',
             excerpt: '各位同学：\n数据科学与计算机学院计算机类（计科、网工、信安）专业2019届本科生毕业论文答辩分组名单及答辩要求见附件，请同学们认真查看，按时参加答辩。（5月9日已经在年级群通知）\n祝同学们答辩顺利！\n数据科学与计算机学院教务办\n2019年5月13日',
             content: '各位同学：\n数据科学与计算机学院计算机类（计科、网工、信安）专业2019届本科生毕业论文答辩分组名单及答辩要求见附件，请同学们认真查看，按时参加答辩。（5月9日已经在年级群通知）\n祝同学们答辩顺利！\n数据科学与计算机学院教务办\n2019年5月13日',
-            url: 'http://sdcs.sysu.edu.cn/content/4809'
+            url: 'http://sdcs.sysu.edu.cn/content/4809',
+            attachments: [
+              
+            ]
           },
           {
             id: 2,
@@ -40,7 +43,8 @@ export default new Vuex.Store({
       }
     ],
 
-    activeTab: '',
+    lastActiveTab: 'home',
+    activeTab: 'home',
     tabList: [],
     tabIncrement: 0
   },
@@ -50,7 +54,19 @@ export default new Vuex.Store({
       state.tabList.push(tab);
       state.activeTab = tab.type + tab.id;
     },
+    removeTab (state, tabKey) {
+      const tabPos = state.tabList.findIndex((tab) => (tab.type + tab.id) === tabKey );
+      state.tabList.splice(tabPos, 1);
+
+      const lastTabPos = state.tabList.findIndex((tab) => (tab.type + tab.id) === state.lastActiveTab );
+      if (state.activeTab === tabKey) {
+        state.activeTab = lastTabPos === -1 ? 'home' : state.lastActiveTab;
+      } else {
+        state.lastActiveTab = 'home';
+      }
+    },
     updateActiveTab (state, tabKey) {
+      state.lastActiveTab = state.activeTab;
       state.activeTab = tabKey;
     }
   },

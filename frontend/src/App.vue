@@ -51,13 +51,12 @@ export default {
   methods: {
     onTabEdit (key, action) {
       if (action === 'remove') {
-
+        this.$store.commit('removeTab', key);
       }
     }
   }
 }
 </script>
-
 
 <style lang="less">
 #app {
