@@ -3,28 +3,56 @@
     <a-layout class="layout" style="height: 100%;">
       <a-layout-content>
         <a-tabs
-          v-model="activeKey"
-          type="editable-card">
-          <a-tab-pane style="padding: 24px;" tab="Home" key="home"><home /></a-tab-pane>
+          v-model="activeTab"
+          type="editable-card"
+          @edit="onTabEdit">
+          <a-tab-pane style="padding: 24px;" tab="Home" key="home" :closable="false">
+            <home />
+          </a-tab-pane>
+          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
+            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+            <web-view v-else-if="tab.type === 'webView'" :tab="tab" />
+          </a-tab-pane>
         </a-tabs>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
-        Ant Design ©2018 Created by Ant UED
+        SYSU Tower Project / Made with ❤
       </a-layout-footer>
     </a-layout>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Home from '@/views/Home.vue';
+import FullText from '@/views/FullText.vue';
+import WebView from '@/views/WebView.vue';
 
 export default {
   components: {
-    Home
+    Home,
+    FullText,
+    WebView,
   },
-  data () {
-    return {
-      activeKey: 'home'
+
+  computed: {
+    activeTab: {
+      get () {
+        return this.$store.state.activeTab || 'home';
+      },
+      set (tabKey) {
+        this.$store.commit('updateActiveTab', tabKey)
+      }
+    },
+    ...mapState([
+      'tabList'
+    ])
+  },
+  methods: {
+    onTabEdit (key, action) {
+      if (action === 'remove') {
+
+      }
     }
   }
 }
