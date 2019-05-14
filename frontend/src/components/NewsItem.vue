@@ -34,7 +34,13 @@ export default {
       })
     },
     showOriginal () {
-      alert(this.news.url);
+      this.$store.commit('addTab', {
+        type: 'webView',
+        name: this.news.title,
+        data: {
+          url: this.news.url
+        }
+      })
     },
     share () {
       alert('share');

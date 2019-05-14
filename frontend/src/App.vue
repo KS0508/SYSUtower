@@ -5,19 +5,22 @@
         <a-tabs
           v-model="activeTab"
           type="editable-card"
-          @edit="onTabEdit">
+          @edit="onTabEdit"
+          style="height: 100%;">
           <a-tab-pane style="padding: 24px;" tab="Home" key="home" :closable="false">
-            <home />
+            <keep-alive>
+              <home />
+            </keep-alive>
           </a-tab-pane>
           <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
-            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-            <web-view v-else-if="tab.type === 'webView'" :tab="tab" />
+              <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+              <web-view v-else-if="tab.type === 'webView'" :tab="tab" /> <!-- will soon Deprecated -->
           </a-tab-pane>
         </a-tabs>
       </a-layout-content>
-      <a-layout-footer style="text-align: center">
+      <!--<a-layout-footer style="text-align: center">
         SYSU Tower Project / Made with ❤
-      </a-layout-footer>
+      </a-layout-footer>-->
     </a-layout>
   </div>
 </template>
@@ -41,12 +44,17 @@ export default {
         return this.$store.state.activeTab || 'home';
       },
       set (tabKey) {
-        this.$store.commit('updateActiveTab', tabKey)
+        this.$store.commit('updateActiveTab', tabKey);
       }
     },
-    ...mapState([
-      'tabList'
-    ])
+    tabList: {
+      get () {
+        return this.$store.state.tabList;
+      },
+      set (value) {
+        this.$store.commit('updateTabList', value);
+      }
+    },
   },
   methods: {
     onTabEdit (key, action) {
@@ -76,13 +84,20 @@ export default {
     }
   }
 }
+.ant-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .ant-tabs-card > .ant-tabs-content {
   margin-top: -16px;
+  flex: 1;
 }
 
 .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
   background: #fff;
-  padding: 16px;
+  height: 100%;
 }
 
 .ant-tabs-card > .ant-tabs-bar {

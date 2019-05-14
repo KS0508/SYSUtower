@@ -68,6 +68,9 @@ export default new Vuex.Store({
     updateActiveTab (state, tabKey) {
       state.lastActiveTab = state.activeTab;
       state.activeTab = tabKey;
+    },
+    updateTabList (state, tabList) {
+      state.tabList = tabList;
     }
   },
   actions: {
