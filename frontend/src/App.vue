@@ -1,21 +1,32 @@
 <template>
   <div id="app">
     <a-layout class="layout" style="height: 100%;">
-      <a-layout-content>
+      <a-layout-header>
         <a-tabs
           v-model="activeTab"
           type="editable-card"
           @edit="onTabEdit"
-          style="height: 100%;">
-          <a-tab-pane style="padding: 24px;" tab="Home" key="home" :closable="false">
-            <keep-alive>
+          @change="debug(1)"
+          @tabClick="debug(2)">
+          <a-tab-pane tab="Home" key="home" :closable="false">
+            <!--<keep-alive>
               <home />
-            </keep-alive>
+            </keep-alive>-->
           </a-tab-pane>
-          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.id">
-              <full-text :tab="tab" />
+          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
+              <!--<keep-alive>
+                <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+                <full-page v-if="tab.type === 'fullPage'" :tab="tab" />
+              </keep-alive>-->
           </a-tab-pane>
         </a-tabs>
+      </a-layout-header>
+      <a-layout-content>
+        <div class="st-view-container">
+          <keep-alive>
+            <router-view />
+          </keep-alive>
+        </div>
       </a-layout-content>
       <!--<a-layout-footer style="text-align: center">
         SYSU Tower Project / Made with ❤
@@ -27,11 +38,13 @@
 <script>
 import Home from '@/views/Home.vue';
 import FullText from '@/views/FullText.vue';
+import FullPage from '@/views/FullPage.vue';
 
 export default {
   components: {
     Home,
     FullText,
+    FullPage,
   },
 
   computed: {
@@ -58,6 +71,9 @@ export default {
         this.$store.commit('removeTab', key);
       }
     },
+    debug(type) {
+      console.log(type);
+    }
   },
 };
 </script>
@@ -80,33 +96,32 @@ export default {
     }
   }
 }
-.ant-tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
 
-.ant-tabs-card > .ant-tabs-content {
-  margin-top: -16px;
-  flex: 1;
-}
-
-.ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
-  background: #fff;
-  height: 100%;
+.ant-layout-header {
+  background: transparent;
+  padding: 0;
+  height: auto;
 }
 
 .ant-tabs-card > .ant-tabs-bar {
+  margin: 0;
   border-color: #fff;
+  -webkit-app-region: drag;
 }
 
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
   border-color: transparent;
   background: transparent;
+  -webkit-app-region: no-drag;
 }
 
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+}
+
+.st-view-container {
+  background: #fff;
+  height: 100%;
 }
 </style>

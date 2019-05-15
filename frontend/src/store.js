@@ -53,13 +53,13 @@ export default new Vuex.Store({
       state.tabIncrement += 1;
       tab.id = state.tabIncrement;
       state.tabList.push(tab);
-      state.activeTab = `tab${tab.id}`;
+      state.activeTab = `${tab.type}${tab.id}`;
     },
     removeTab(state, tabKey) {
-      const tabPos = state.tabList.findIndex(tab => (`tab${tab.id}`) === tabKey);
+      const tabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === tabKey);
       state.tabList.splice(tabPos, 1);
 
-      const lastTabPos = state.tabList.findIndex(tab => (`tab${tab.id}`) === state.lastActiveTab);
+      const lastTabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === state.lastActiveTab);
       if (state.activeTab === tabKey) {
         state.activeTab = lastTabPos === -1 ? 'home' : state.lastActiveTab;
       } else {

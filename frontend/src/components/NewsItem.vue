@@ -26,6 +26,7 @@ export default {
     showFull() {
       this.$store.commit('addTab', {
         name: this.news.title,
+        type: 'fullText',
         data: {
           title: this.news.title,
           content: this.news.content,
@@ -33,7 +34,13 @@ export default {
       });
     },
     showOriginal() {
-
+      this.$store.commit('addTab', {
+        name: this.news.title,
+        type: 'fullPage',
+        data: {
+          url: this.news.url,
+        },
+      });
     },
     share() {
     },

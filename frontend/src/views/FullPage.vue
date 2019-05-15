@@ -1,19 +1,19 @@
 <template>
-  <div class="st-view-webview">
-    <div class="st-wv-control-bar">
+  <div class="st-view-fullpage" v-once>
+    <div class="st-fp-control-bar">
       <a-input v-model="inputUrl" />
       <a-button-group>
         <a-button icon="reload">刷新</a-button>
         <a-button icon="paper-clip">复制链接</a-button>
       </a-button-group>
     </div>
-    <iframe class="st-wv-iframe" :src="tab.data.url" frameborder="0"></iframe>
+    <keep-alive>
+      <webview class="st-fp-iframe" ref="webviewEl" frameborder="0"></webview>
+    </keep-alive>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
-
 export default {
   props: [
     'tab',
@@ -24,6 +24,11 @@ export default {
     };
   },
 
+  mounted () {
+    console.log(this.$refs.webviewEl);
+    this.$refs.webviewEl.setAttribute('src', this.tab.data.url);
+  },
+
   beforeUpdate() {
     console.log('Im going to update');
   },
@@ -31,21 +36,21 @@ export default {
 </script>
 
 <style>
-  .st-view-webview {
+  .st-view-fullpage {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
-  .st-wv-control-bar {
+  .st-fp-control-bar {
     display: flex;
     flex-direction: row;
     padding: 8px;
   }
-  .st-wv-control-bar .ant-input {
+  .st-fp-control-bar .ant-input {
     flex: 1;
     margin-right: 8px;
   }
-  .st-wv-iframe {
+  .st-fp-iframe {
     flex: 1;
   }
 </style>

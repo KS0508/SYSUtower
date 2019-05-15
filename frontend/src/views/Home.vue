@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="st-view-home">
     <news-feed v-for="category in newsData" :key="category.id" :category="category" />
   </section>
 </template>
@@ -24,5 +24,7 @@ export default {
 </script>
 
 <style>
-
+  .st-view-home {
+    padding: 24px;
+  }
 </style>
