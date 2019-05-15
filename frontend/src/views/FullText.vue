@@ -8,9 +8,9 @@
 <script>
 export default {
   props: [
-    'tab'
-  ]
-}
+    'tab',
+  ],
+};
 </script>
 
 <style>

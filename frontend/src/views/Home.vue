@@ -17,12 +17,12 @@ export default {
   },
   computed: {
     ...mapState([
-      'newsData'
-    ])
-  }
+      'newsData',
+    ]),
+  },
 };
 </script>
 
 <style>
-  
+
 </style>

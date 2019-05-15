@@ -14,13 +14,13 @@ import NewsItem from '@/components/NewsItem.vue';
 
 export default {
   components: {
-    NewsItem
+    NewsItem,
   },
   props: ['category'],
   computed: {
-    newsList () {
+    newsList() {
       return this.category.news.slice(0, 3);
-    }
-  }
-}
+    },
+  },
+};
 </script>

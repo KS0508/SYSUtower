@@ -12,9 +12,8 @@
               <home />
             </keep-alive>
           </a-tab-pane>
-          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
-              <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-              <web-view v-else-if="tab.type === 'webView'" :tab="tab" /> <!-- will soon Deprecated -->
+          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.id">
+              <full-text :tab="tab" />
           </a-tab-pane>
         </a-tabs>
       </a-layout-content>
@@ -26,44 +25,41 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Home from '@/views/Home.vue';
 import FullText from '@/views/FullText.vue';
-import WebView from '@/views/WebView.vue';
 
 export default {
   components: {
     Home,
     FullText,
-    WebView,
   },
 
   computed: {
     activeTab: {
-      get () {
-        return this.$store.state.activeTab || 'home';
+      get() {
+        return this.$store.state.activeTab;
       },
-      set (tabKey) {
+      set(tabKey) {
         this.$store.commit('updateActiveTab', tabKey);
-      }
+      },
     },
     tabList: {
-      get () {
+      get() {
         return this.$store.state.tabList;
       },
-      set (value) {
+      set(value) {
         this.$store.commit('updateTabList', value);
-      }
+      },
     },
   },
   methods: {
-    onTabEdit (key, action) {
+    onTabEdit(key, action) {
       if (action === 'remove') {
         this.$store.commit('removeTab', key);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="less">

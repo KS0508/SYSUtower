@@ -16,18 +16,18 @@ import Vue from 'vue';
 
 export default {
   props: [
-    'tab'
+    'tab',
   ],
-  data () {
+  data() {
     return {
-      inputUrl: this.tab.data.url
-    }
+      inputUrl: this.tab.data.url,
+    };
   },
-  
-  beforeUpdate () {
+
+  beforeUpdate() {
     console.log('Im going to update');
-  }
-}
+  },
+};
 </script>
 
 <style>

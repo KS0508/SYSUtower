@@ -18,8 +18,8 @@ export default new Vuex.Store({
             content: '各位同学：\n数据科学与计算机学院计算机类（计科、网工、信安）专业2019届本科生毕业论文答辩分组名单及答辩要求见附件，请同学们认真查看，按时参加答辩。（5月9日已经在年级群通知）\n祝同学们答辩顺利！\n数据科学与计算机学院教务办\n2019年5月13日',
             url: 'http://sdcs.sysu.edu.cn/content/4809',
             attachments: [
-              
-            ]
+
+            ],
           },
           {
             id: 2,
@@ -39,39 +39,40 @@ export default new Vuex.Store({
             excerpt: ' 各位同学：现转发《教务部关于开展2019年中山大学实验室开放基金项目推荐工作的通知》（附件1），有意向申报的学生团队，请于5月13日中午12点前提交《中山大学实验室开放基金项目申请书》（附件2）纸质版一式三份至学院A111吴老师处，电子版《中山大学实验室开放基金项目申请书》及《中山大学实验室开放基金项目信息登记汇总表》（附件3）请发至吴老师邮箱：wulanlan@mail.sysu.edu.cn。',
             date: '2019/05/06',
           },
-        ]
-      }
+        ],
+      },
     ],
 
     lastActiveTab: 'home',
     activeTab: 'home',
     tabList: [],
-    tabIncrement: 0
+    tabIncrement: 0,
   },
   mutations: {
-    addTab (state, tab) {
-      tab.id = state.tabIncrement++;
+    addTab(state, tab) {
+      state.tabIncrement += 1;
+      tab.id = state.tabIncrement;
       state.tabList.push(tab);
-      state.activeTab = tab.type + tab.id;
+      state.activeTab = `tab${tab.id}`;
     },
-    removeTab (state, tabKey) {
-      const tabPos = state.tabList.findIndex((tab) => (tab.type + tab.id) === tabKey );
+    removeTab(state, tabKey) {
+      const tabPos = state.tabList.findIndex(tab => (`tab${tab.id}`) === tabKey);
       state.tabList.splice(tabPos, 1);
 
-      const lastTabPos = state.tabList.findIndex((tab) => (tab.type + tab.id) === state.lastActiveTab );
+      const lastTabPos = state.tabList.findIndex(tab => (`tab${tab.id}`) === state.lastActiveTab);
       if (state.activeTab === tabKey) {
         state.activeTab = lastTabPos === -1 ? 'home' : state.lastActiveTab;
       } else {
         state.lastActiveTab = 'home';
       }
     },
-    updateActiveTab (state, tabKey) {
+    updateActiveTab(state, tabKey) {
       state.lastActiveTab = state.activeTab;
       state.activeTab = tabKey;
     },
-    updateTabList (state, tabList) {
+    updateTabList(state, tabList) {
       state.tabList = tabList;
-    }
+    },
   },
   actions: {
 
