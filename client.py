@@ -1,0 +1,68 @@
+import json
+import flask
+
+client = FLASK_APP(__name__)
+
+@client.route('/update_news')
+def update_news():
+'''
+    news = dict()
+    news[news_id]
+    news[news_address], news[news_title]
+    news[news_summary], news[news_keyword]
+    news_json = json.dump(news)
+    return [news_json]
+'''
+
+@client.route('/news_tab')
+def news_tab(news_id):
+'''
+    tab_news = dict()
+    tab_news[news_id]
+    tab_news[news_content_html]
+    tab_news[attachment_list]
+    tab_news_json = json.dump(tab_news)
+    return tab_news_json
+'''
+
+@client.route('/download_attachment')
+def download_attachment(attchment_id):
+'''
+    return operation_status
+'''
+
+@client.route('/bookmark_news')
+def bookmark_news(news_id, operation):
+'''
+    operation == 1 : add bookmark
+    operation == 0 : delete bookmark
+    return operation_status
+'''
+
+@client.route('/all_bookmarked_news')
+def all_bookmarked_news():
+'''
+    return the same as update_news
+'''
+
+@client.route('/search')
+def search(keyword):
+'''
+    return the same as update_news
+'''
+
+@client.route('/keyword')
+def filter(keyword):
+'''
+    return the same as update_news
+'''
+
+@client.route('/all_sourse')
+def all_sources():
+'''
+    source = dict()
+    source[source_id]
+    source[source_department_name], source[source_sub_name]
+    source[source_type], source[source_address]
+    return [source]
+'''
