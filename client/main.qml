@@ -15,7 +15,7 @@ Window
 
     WebView
     {
-        url: "qrc:/index.html"
+        url: "http://fffeng.rwong.cc"
         anchors.fill: parent
     }
 

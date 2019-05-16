@@ -244,7 +244,6 @@ Makefile: ..\client\client.pro ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\win32-msvc
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\resources.prf \
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\moc.prf \
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\win32\opengl.prf \
-		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\uic.prf \
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\qmake_use.prf \
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\file_copies.prf \
 		..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\win32\windows.prf \
@@ -255,7 +254,6 @@ Makefile: ..\client\client.pro ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\win32-msvc
 		..\client\client.pro \
 		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Quick.prl \
 		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5WebView.prl \
-		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Widgets.prl \
 		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Gui.prl \
 		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5WebChannel.prl \
 		..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Qml.prl \
@@ -430,7 +428,6 @@ Makefile: ..\client\client.pro ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\win32-msvc
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\resources.prf:
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\moc.prf:
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\win32\opengl.prf:
-..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\uic.prf:
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\qmake_use.prf:
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\file_copies.prf:
 ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\features\win32\windows.prf:
@@ -441,7 +438,6 @@ Makefile: ..\client\client.pro ..\..\..\QT\5.12.3\msvc2017_64\mkspecs\win32-msvc
 ..\client\client.pro:
 ..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Quick.prl:
 ..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5WebView.prl:
-..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Widgets.prl:
 ..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Gui.prl:
 ..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5WebChannel.prl:
 ..\..\..\QT\5.12.3\msvc2017_64\lib\Qt5Qml.prl:
