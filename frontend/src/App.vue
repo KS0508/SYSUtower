@@ -5,9 +5,7 @@
         <a-tabs
           v-model="activeTab"
           type="editable-card"
-          @edit="onTabEdit"
-          @change="debug(1)"
-          @tabClick="debug(2)">
+          @edit="onTabEdit">
           <a-tab-pane tab="Home" key="home" :closable="false">
             <!--<keep-alive>
               <home />
@@ -23,9 +21,15 @@
       </a-layout-header>
       <a-layout-content>
         <div class="st-view-container">
-          <keep-alive>
-            <router-view />
-          </keep-alive>
+          <div class="st-view-tab" key="home">
+            <home />
+          </div>
+          <div class="st-view-tab" v-for="tab in tabList"
+            :key="tab.type + tab.id"
+            :style="{visibility: true}">
+            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+            <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
+          </div>
         </div>
       </a-layout-content>
       <!--<a-layout-footer style="text-align: center">
@@ -39,6 +43,17 @@
 import Home from '@/views/Home.vue';
 import FullText from '@/views/FullText.vue';
 import FullPage from '@/views/FullPage.vue';
+
+async function initializeData() {
+  const homeData = await this.$request.api('GET', '/home');
+  try {
+    const homeDataJSON = JSON.parse(homeData);
+    this.$store.commit('setNewsData', homeDataJSON);
+  } catch (err) {
+    // Do nothing
+    console.log(err);
+  }
+}
 
 export default {
   components: {
@@ -74,6 +89,10 @@ export default {
     debug(type) {
       console.log(type);
     }
+  },
+
+  mounted() {
+    initializeData.call(this);
   },
 };
 </script>
