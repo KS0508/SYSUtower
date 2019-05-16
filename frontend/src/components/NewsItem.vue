@@ -19,34 +19,33 @@ import NewsItemAction from '@/components/NewsItemAction.vue';
 export default {
   props: ['news'],
   components: {
-    NewsItemAction
+    NewsItemAction,
   },
 
   methods: {
-    showFull () {
+    showFull() {
       this.$store.commit('addTab', {
-        type: 'fullText',
         name: this.news.title,
+        type: 'fullText',
         data: {
           title: this.news.title,
-          content: this.news.content
-        }
-      })
+          content: this.news.content,
+        },
+      });
     },
-    showOriginal () {
+    showOriginal() {
       this.$store.commit('addTab', {
-        type: 'webView',
         name: this.news.title,
+        type: 'fullPage',
         data: {
-          url: this.news.url
-        }
-      })
+          url: this.news.url,
+        },
+      });
     },
-    share () {
-      alert('share');
-    }
-  }
-}
+    share() {
+    },
+  },
+};
 </script>
 
 <style>

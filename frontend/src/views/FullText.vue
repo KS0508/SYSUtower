@@ -8,12 +8,16 @@
 <script>
 export default {
   props: [
-    'tab'
-  ]
-}
+    'tab',
+  ],
+};
 </script>
 
 <style>
+  .st-view-fulltext {
+    padding: 24px;
+  }
+
   .st-ft-title {
     text-align: center;
   }
