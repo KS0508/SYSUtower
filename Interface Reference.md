@@ -1,30 +1,30 @@
 ## Source Database
 
-| source_department | source_name                   | source_type | source_address       |
-| ----------------- | ----------------------------- | ----------- | -------------------- |
-| acdemia           | default name for subscription | website     | website_address      |
-| department        |                               | wechat      | offcial_account_name |
+| source_id | source_department_name | source_sub_name | source_type | source_address        |
+| --------- | ---------------------- | --------------- | ----------- | --------------------- |
+| 1         |                        |                 | website     | website_address       |
+| 2         |                        |                 | wechat      | official_account_name |
 
 ## Subscription Database
 
-| subscription_id | subscription_name        | subscription_type | subscription_sorurce | last_updated_time |
-| --------------- | ------------------------ | ----------------- | -------------------- | ----------------- |
-| 1               | can be modified by users | website           | website_address      |                   |
-| 2               |                          | wechat            | offcial_account_name |                   |
+| subscription_id | subscription_type | subscription_sorurce | last_updated_time |
+| --------------- | ----------------- | -------------------- | ----------------- |
+| 1               | website           | website_address      |                   |
+| 2               | wechat            | offcial_account_name |                   |
 
 ## News Information Database
 
-| news_id | news_type      | news_address    | news_full_content | news_abstract | keyword_count | keyword_1 | ...  | keyword_5 | is_bookmarked | created_time       | added_time | news_subscription_id | news_subscription_name |
-| ------- | -------------- | --------------- | ----------------- | ------------- | ------------- | --------- | ---- | --------- | ------------- | ------------------ | ---------- | -------------------- | ---------------------- |
-| 1       | website_news   | news_address    | simplified_html   | summary text  | <=5           |           |      |           | True          | written in news    |            |                      |                        |
-| 2       | wechat_article | article_address | simplified_html   |               |               |           |      |           | False         | written in article |            |                      |                        |
+| subscription_id | news_id | news_address    | news_title | news_text | news_content_html | news_abstract | news_keyword | is_bookmarked | publish_time       | fetch_time |
+| --------------- | ------- | --------------- | ---------- | --------- | ----------------- | ------------- | ------------ | ------------- | ------------------ | ---------- |
+|                 | 1       | news_address    |            |           | simplified_html   | summary text  | A,B,C,D      | True          | written in news    |            |
+|                 | 2       | article_address |            |           | simplified_html   |               |              | False         | written in article |            |
 
 ## News Attachment Database
 
-| news_id | news_type      | attachment_count | attachment_name_1 | attachment_address_1 | ...  | attachment_name_n | attachment_address_n |
-| ------- | -------------- | ---------------- | ----------------- | -------------------- | ---- | ----------------- | -------------------- |
-| 1       | wechat_article | 0                |                   |                      |      |                   |                      |
-| 2       | website_news   | n                |                   |                      |      |                   |                      |
+| news_id | attachment_id | attachment_name | attachment_address |
+| ------- | ------------- | --------------- | ------------------ |
+| 1       |               |                 |                    |
+| 2       |               |                 |                    |
 
 
 
