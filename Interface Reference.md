@@ -1,9 +1,9 @@
 ## Source Database
 
-| source_id | source_department | source_sub_name | source_type | source_address        |
-| --------- | ----------------- | --------------- | ----------- | --------------------- |
-| 1         |                   |                 | website     | website_address       |
-| 2         |                   |                 | wechat      | official_account_name |
+| source_id | source_department_name | source_sub_name | source_type | source_address        |
+| --------- | ---------------------- | --------------- | ----------- | --------------------- |
+| 1         |                        |                 | website     | website_address       |
+| 2         |                        |                 | wechat      | official_account_name |
 
 ## Subscription Database
 
@@ -14,10 +14,10 @@
 
 ## News Information Database
 
-| subscription_id | news_id | news_address    | news_title | news_content_html | news_abstract | news_keyword | is_bookmarked | created_time       | added_time |
-| --------------- | ------- | --------------- | ---------- | ----------------- | ------------- | ------------ | ------------- | ------------------ | ---------- |
-|                 | 1       | news_address    |            | simplified_html   | summary text  | A,B,C,D      | True          | written in news    |            |
-|                 | 2       | article_address |            | simplified_html   |               |              | False         | written in article |            |
+| subscription_id | news_id | news_address    | news_title | news_text | news_content_html | news_abstract | news_keyword | is_bookmarked | publish_time       | fetch_time |
+| --------------- | ------- | --------------- | ---------- | --------- | ----------------- | ------------- | ------------ | ------------- | ------------------ | ---------- |
+|                 | 1       | news_address    |            |           | simplified_html   | summary text  | A,B,C,D      | True          | written in news    |            |
+|                 | 2       | article_address |            |           | simplified_html   |               |              | False         | written in article |            |
 
 ## News Attachment Database
 
