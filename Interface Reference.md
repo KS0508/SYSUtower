@@ -14,10 +14,10 @@
 
 ## News Information Database
 
-| subscription_id | news_id | news_address    | news_title | news_text | news_content_html | news_abstract | news_keyword | is_bookmarked | publish_time       | fetch_time |
-| --------------- | ------- | --------------- | ---------- | --------- | ----------------- | ------------- | ------------ | ------------- | ------------------ | ---------- |
-|                 | 1       | news_address    |            |           | simplified_html   | summary text  | A,B,C,D      | True          | written in news    |            |
-|                 | 2       | article_address |            |           | simplified_html   |               |              | False         | written in article |            |
+| subscription_id | news_id | news_address    | news_title | news_text | news_content_html | news_abstract | is_bookmarked | publish_time       | fetch_time |
+| --------------- | ------- | --------------- | ---------- | --------- | ----------------- | ------------- | ------------- | ------------------ | ---------- |
+|                 | 1       | news_address    |            |           | simplified_html   | summary text  | True          | written in news    |            |
+|                 | 2       | article_address |            |           | simplified_html   |               | False         | written in article |            |
 
 ## News Attachment Database
 
@@ -25,6 +25,12 @@
 | ------- | ------------- | --------------- | ------------------ |
 | 1       |               |                 |                    |
 | 2       |               |                 |                    |
+
+## News Keyword Database
+
+| news_id | keyword |
+| ------- | ------- |
+|         |         |
 
 
 

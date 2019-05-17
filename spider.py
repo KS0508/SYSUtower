@@ -12,7 +12,7 @@ def scrap_subscriptnion(subscription_list):
     subscription[subscrioption_source]
     
     news_info = dict()
-    news_info[subscription_id], news_info[news_id]
+    news_info[subscription_id]
     news_info[news_address], news_info[news_title]
     news_info[news_text]
     news_info[news_content_html]

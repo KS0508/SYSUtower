@@ -55,3 +55,13 @@ def all_sources():
     source[source_type], source[source_address]
     return [source]
 '''
+
+def check_news_scraped(news_list):
+'''
+    news_list = [news_basic_info]
+    news_basic_info = dict()
+    news_basic_info[news_title], news_basic_info[news_address]
+    
+    unscraped_news = (news_address not exist | news_title not same)
+    return [unscraped_news]
+'''
