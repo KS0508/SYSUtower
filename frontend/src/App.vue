@@ -1,22 +1,36 @@
 <template>
   <div id="app">
     <a-layout class="layout" style="height: 100%;">
-      <a-layout-content>
+      <a-layout-header>
         <a-tabs
           v-model="activeTab"
           type="editable-card"
-          @edit="onTabEdit"
-          style="height: 100%;">
-          <a-tab-pane style="padding: 24px;" tab="Home" key="home" :closable="false">
-            <keep-alive>
+          @edit="onTabEdit">
+          <a-tab-pane tab="Home" key="home" :closable="false">
+            <!--<keep-alive>
               <home />
-            </keep-alive>
+            </keep-alive>-->
           </a-tab-pane>
           <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
-              <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-              <web-view v-else-if="tab.type === 'webView'" :tab="tab" /> <!-- will soon Deprecated -->
+              <!--<keep-alive>
+                <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+                <full-page v-if="tab.type === 'fullPage'" :tab="tab" />
+              </keep-alive>-->
           </a-tab-pane>
         </a-tabs>
+      </a-layout-header>
+      <a-layout-content>
+        <div class="st-view-container">
+          <div class="st-view-tab" key="home">
+            <home />
+          </div>
+          <div class="st-view-tab" v-for="tab in tabList"
+            :key="tab.type + tab.id"
+            :style="{visibility: true}">
+            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
+            <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
+          </div>
+        </div>
       </a-layout-content>
       <!--<a-layout-footer style="text-align: center">
         SYSU Tower Project / Made with ❤
@@ -26,44 +40,61 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Home from '@/views/Home.vue';
 import FullText from '@/views/FullText.vue';
-import WebView from '@/views/WebView.vue';
+import FullPage from '@/views/FullPage.vue';
+
+async function initializeData() {
+  const homeData = await this.$request.api('GET', '/home');
+  try {
+    const homeDataJSON = JSON.parse(homeData);
+    this.$store.commit('setNewsData', homeDataJSON);
+  } catch (err) {
+    // Do nothing
+    console.log(err);
+  }
+}
 
 export default {
   components: {
     Home,
     FullText,
-    WebView,
+    FullPage,
   },
 
   computed: {
     activeTab: {
-      get () {
-        return this.$store.state.activeTab || 'home';
+      get() {
+        return this.$store.state.activeTab;
       },
-      set (tabKey) {
+      set(tabKey) {
         this.$store.commit('updateActiveTab', tabKey);
-      }
+      },
     },
     tabList: {
-      get () {
+      get() {
         return this.$store.state.tabList;
       },
-      set (value) {
+      set(value) {
         this.$store.commit('updateTabList', value);
-      }
+      },
     },
   },
   methods: {
-    onTabEdit (key, action) {
+    onTabEdit(key, action) {
       if (action === 'remove') {
         this.$store.commit('removeTab', key);
       }
+    },
+    debug(type) {
+      console.log(type);
     }
-  }
-}
+  },
+
+  mounted() {
+    initializeData.call(this);
+  },
+};
 </script>
 
 <style lang="less">
@@ -84,33 +115,32 @@ export default {
     }
   }
 }
-.ant-tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
 
-.ant-tabs-card > .ant-tabs-content {
-  margin-top: -16px;
-  flex: 1;
-}
-
-.ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
-  background: #fff;
-  height: 100%;
+.ant-layout-header {
+  background: transparent;
+  padding: 0;
+  height: auto;
 }
 
 .ant-tabs-card > .ant-tabs-bar {
+  margin: 0;
   border-color: #fff;
+  -webkit-app-region: drag;
 }
 
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
   border-color: transparent;
   background: transparent;
+  -webkit-app-region: no-drag;
 }
 
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+}
+
+.st-view-container {
+  background: #fff;
+  height: 100%;
 }
 </style>
