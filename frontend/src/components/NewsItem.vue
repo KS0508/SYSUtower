@@ -29,11 +29,7 @@ export default {
       this.$store.commit('addTab', {
         name: this.news.title,
         type: 'fullText',
-        data: {
-          newsID: this.news.id,
-          title: this.news.title,
-          content: this.news.content,
-        },
+        data: this.news
       });
     },
     showOriginal() {

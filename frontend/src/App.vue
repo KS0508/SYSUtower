@@ -42,7 +42,7 @@
 import Tab from '@/views/Tab.vue';
 
 async function initializeData() {
-  const homeData = await this.$request.api('GET', '/home.json');
+  const homeData = await this.$request.api('GET', '/home?limit=5');
   this.$store.commit('setNewsData', homeData);
 }
 

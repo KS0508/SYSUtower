@@ -20,7 +20,7 @@ export default new Vuex.Store({
       const tabArray = Object.entries(state.tabList);
       let existTab;
       if (tab.type === 'fullText') {
-        existTab = tabArray.find(obj => obj[1].data.newsID === tab.data.newsID);
+        existTab = tabArray.find(obj => obj[1].data.id === tab.data.id);
       } else {
         existTab = tabArray.find(obj => obj[1].data.url === tab.data.url);
       }

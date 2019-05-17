@@ -1,9 +1,9 @@
 const { net } = require('electron').remote; // eslint-disable-line import/no-extraneous-dependencies
 
-// const ST_HOST = '172.18.40.173';
-// const ST_PORT = 5000;
-const ST_HOST = 'localhost';
-const ST_PORT = '8000';
+const ST_HOST = '172.18.40.173';
+const ST_PORT = 777;
+// const ST_HOST = 'localhost';
+// const ST_PORT = '8000';
 
 export default function install(Vue) {
   Vue.prototype.$request = { // eslint-disable-line no-param-reassign
@@ -29,7 +29,8 @@ export default function install(Vue) {
             }
 
             if (resJSON.ret !== 0) {
-              reject(retJSON.data);
+              reject(resJSON.data);
+              console.log(resJSON);
             } else {
               resolve(resJSON.data);
             }
