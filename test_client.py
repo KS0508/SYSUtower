@@ -39,13 +39,17 @@ s = '''[
       },
 ]'''
 
-import flask
+from flask import Flask
+from flask import request
+import json
+import sqlite3
 
-test = flask.Flask(__name__)
+test = Flask(__name__)
 
-@test.route('/')
+@test.route('/home', methods = ['GET'])
 def Test():
-    return 'Hello, World'
+	if request.method == 'GET':
+		return 'a %d' % request.args.get('limit', 5, type = int)
 
 # 获得订阅分类，每个分类返回名字，id，和前几篇文章
 # @test.route('/subsription')
