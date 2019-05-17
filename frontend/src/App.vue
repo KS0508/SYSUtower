@@ -6,13 +6,14 @@
           v-model="activeTab"
           type="editable-card"
           :tabBarGutter="6"
+          :hideAdd="true"
           @edit="onTabEdit">
           <a-tab-pane key="home" :closable="false">
             <span slot="tab" class="st-tab-text">
               <a-icon type="home" />首页
             </span>
           </a-tab-pane>
-          <a-tab-pane v-for="tab in tabList" :key="tab.type + tab.id">
+          <a-tab-pane v-for="(tab, key) in tabList" :key="key">
             <span slot="tab" class="st-tab-text" :title="tab.name">
               <a-icon :type="tab.type === 'fullText' ? 'read' : 'file-text'" />{{ tab.name }}
             </span>
@@ -21,10 +22,13 @@
       </a-layout-header>
       <a-layout-content>
         <div class="st-view-container">
-          <tab :tab="{'type': 'home', 'id': ''}" :activeTab="activeTab" />
-          <tab v-for="tab in tabList"
-            :key="tab.type + tab.id"
-            :tab="tab" :activeTab="activeTab" />
+          <tab
+            :tab="{'type': 'home', 'id': 'home'}"
+            :activeTab="activeTab" />
+          <tab v-for="(tab, key) in tabList"
+            :key="key"
+            :tab="tab"
+            :activeTab="activeTab" />
         </div>
       </a-layout-content>
       <!--<a-layout-footer style="text-align: center">

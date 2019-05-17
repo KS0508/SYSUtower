@@ -9,26 +9,37 @@ export default new Vuex.Store({
 
     lastActiveTab: 'home',
     activeTab: 'home',
-    tabList: [],
+    tabList: {},
     tabIncrement: 0,
   },
   mutations: {
-    setNewsData (state, data) {
+    setNewsData(state, data) {
       state.newsData = data;
     },
     addTab(state, tab) {
-      state.tabIncrement += 1;
-      tab.id = state.tabIncrement;
-      state.tabList.push(tab);
-      state.activeTab = `${tab.type}${tab.id}`;
+      const tabArray = Object.entries(state.tabList);
+      let existTab;
+      if (tab.type === 'fullText') {
+        existTab = tabArray.find(obj => obj[1].data.newsID === tab.data.newsID);
+      } else {
+        existTab = tabArray.find(obj => obj[1].data.url === tab.data.url);
+      }
+
+      if (existTab) {
+        state.lastActiveTab = state.activeTab;
+        state.activeTab = existTab[0];
+      } else {
+        state.tabIncrement += 1;
+        tab.id = `${state.tabIncrement}`;
+        Vue.set(state.tabList, tab.id, tab);
+        state.activeTab = `${tab.id}`;
+      }
     },
     removeTab(state, tabKey) {
-      const tabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === tabKey);
-      state.tabList.splice(tabPos, 1);
+      Vue.delete(state.tabList, tabKey);
 
-      const lastTabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === state.lastActiveTab);
       if (state.activeTab === tabKey) {
-        state.activeTab = lastTabPos === -1 ? 'home' : state.lastActiveTab;
+        state.activeTab = state.tabList[state.lastActiveTab] ? state.lastActiveTab : 'home';
       } else {
         state.lastActiveTab = 'home';
       }
@@ -40,6 +51,14 @@ export default new Vuex.Store({
     updateTabList(state, tabList) {
       state.tabList = tabList;
     },
+    updateTabTitle(state, {id, title}) {
+      Vue.set(state.tabList[id], 'name', title);
+      console.log(id, title);
+    },
+    updateTabURL(state, {id, url}) {
+      Vue.set(state.tabList[id].data, 'url', url);
+      console.log(id, url);
+    }
   },
   actions: {
 

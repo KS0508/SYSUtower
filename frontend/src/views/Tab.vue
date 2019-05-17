@@ -1,6 +1,6 @@
 <template>
   <div class="st-view-tab"
-    :style="{display: tabKey === activeTab ? 'block' : 'none'}">
+    :style="{display: tab.id === activeTab ? 'block' : 'none'}">
     <home v-if="tab.type === 'home'" />
     <full-text v-else-if="tab.type === 'fullText'" :tab="tab" />
     <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
@@ -20,14 +20,9 @@ export default {
   },
   props: [
     'tab',
-    'activeTab'
+    'activeTab',
   ],
-  computed: {
-    tabKey () {
-      return `${this.tab.type}${this.tab.id}`;
-    }
-  }
-}
+};
 </script>
 
 <style>

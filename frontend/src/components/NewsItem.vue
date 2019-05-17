@@ -30,6 +30,7 @@ export default {
         name: this.news.title,
         type: 'fullText',
         data: {
+          newsID: this.news.id,
           title: this.news.title,
           content: this.news.content,
         },

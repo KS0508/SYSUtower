@@ -19,7 +19,6 @@ export default {
   props: ['category'],
   computed: {
     newsList() {
-      console.log(this.category);
       return this.category.news.slice(0, 3);
     },
   },
