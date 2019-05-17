@@ -19,8 +19,15 @@ export default {
   props: ['category'],
   computed: {
     newsList() {
+      console.log(this.category);
       return this.category.news.slice(0, 3);
     },
   },
 };
 </script>
+
+<style>
+  .category {
+    margin-bottom: 36px;
+  }
+</style>

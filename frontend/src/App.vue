@@ -5,31 +5,26 @@
         <a-tabs
           v-model="activeTab"
           type="editable-card"
+          :tabBarGutter="6"
           @edit="onTabEdit">
-          <a-tab-pane tab="Home" key="home" :closable="false">
-            <!--<keep-alive>
-              <home />
-            </keep-alive>-->
+          <a-tab-pane key="home" :closable="false">
+            <span slot="tab" class="st-tab-text">
+              <a-icon type="home" />首页
+            </span>
           </a-tab-pane>
-          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
-              <!--<keep-alive>
-                <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-                <full-page v-if="tab.type === 'fullPage'" :tab="tab" />
-              </keep-alive>-->
+          <a-tab-pane v-for="tab in tabList" :key="tab.type + tab.id">
+            <span slot="tab" class="st-tab-text" :title="tab.name">
+              <a-icon :type="tab.type === 'fullText' ? 'read' : 'file-text'" />{{ tab.name }}
+            </span>
           </a-tab-pane>
         </a-tabs>
       </a-layout-header>
       <a-layout-content>
         <div class="st-view-container">
-          <div class="st-view-tab" key="home">
-            <home />
-          </div>
-          <div class="st-view-tab" v-for="tab in tabList"
+          <tab :tab="{'type': 'home', 'id': ''}" :activeTab="activeTab" />
+          <tab v-for="tab in tabList"
             :key="tab.type + tab.id"
-            :style="{visibility: true}">
-            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-            <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
-          </div>
+            :tab="tab" :activeTab="activeTab" />
         </div>
       </a-layout-content>
       <!--<a-layout-footer style="text-align: center">
@@ -40,26 +35,16 @@
 </template>
 
 <script>
-import Home from '@/views/Home.vue';
-import FullText from '@/views/FullText.vue';
-import FullPage from '@/views/FullPage.vue';
+import Tab from '@/views/Tab.vue';
 
 async function initializeData() {
-  const homeData = await this.$request.api('GET', '/home');
-  try {
-    const homeDataJSON = JSON.parse(homeData);
-    this.$store.commit('setNewsData', homeDataJSON);
-  } catch (err) {
-    // Do nothing
-    console.log(err);
-  }
+  const homeData = await this.$request.api('GET', '/home.json');
+  this.$store.commit('setNewsData', homeData);
 }
 
 export default {
   components: {
-    Home,
-    FullText,
-    FullPage,
+    Tab,
   },
 
   computed: {
@@ -88,7 +73,7 @@ export default {
     },
     debug(type) {
       console.log(type);
-    }
+    },
   },
 
   mounted() {
@@ -116,9 +101,21 @@ export default {
   }
 }
 
+.layout {
+  overflow: hidden;
+}
+
+.st-tab-text {
+  max-width: 200px;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: top; /* Why? */
+}
+
 .ant-layout-header {
   background: transparent;
-  padding: 0;
+  padding: 12px 12px 0 12px;
   height: auto;
 }
 

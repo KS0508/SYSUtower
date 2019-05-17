@@ -15,7 +15,7 @@ let win
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
 // Disable menu
-// Menu.setApplicationMenu(null)
+Menu.setApplicationMenu(null)
 
 function createWindow () {
   // Create the browser window.

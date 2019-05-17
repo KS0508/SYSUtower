@@ -4,11 +4,13 @@
     :title="news.title"
     style="height: 300px; display: flex; flex-direction: column;"
     :bodyStyle="{ flex: 1, borderBottom: '24px solid white', overflow: 'hidden'}">
-      <div class="news_excerpt">{{ news.excerpt }}</div>
+      <div
+        class="news_excerpt"
+        @click.native="showFull">{{ news.excerpt }}</div>
     <template class="ant-card-actions" slot="actions">
-      <news-item-action type="full" @click.native="showFull"/>
-      <news-item-action type="original" @click.native="showOriginal"/>
-      <news-item-action type="share" @click.native="share"/>
+      <news-item-action type="full" @click.native.stop="showFull"/>
+      <news-item-action type="original" @click.native.stop="showOriginal"/>
+      <news-item-action :type="news.is_favorite ? 'bookmarked' : 'bookmark'" @click.native.stop="bookmark"/>
     </template>
   </a-card>
 </template>

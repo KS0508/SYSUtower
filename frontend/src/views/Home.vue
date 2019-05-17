@@ -1,6 +1,7 @@
 <template>
   <section class="st-view-home">
     <news-feed v-for="category in newsData" :key="category.id" :category="category" />
+    <a-button block size="large" icon="plus">添加订阅</a-button>
   </section>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="st-view-fulltext">
     <h1 class="st-ft-title">{{ tab.data.title }}</h1>
-    <div>{{ tab.data.content }}</div>
+    <div>{{ tab.data.excerpt }}</div>
   </div>
 </template>
 
