@@ -1,20 +1,26 @@
 <template>
   <div class="st-view-tab"
     :style="{display: tab.id === activeTab ? 'block' : 'none'}">
-    <home v-if="tab.type === 'home'" />
-    <full-text v-else-if="tab.type === 'fullText'" :tab="tab" />
-    <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
+    <component :is="tab.type" :tab="tab" />
   </div>
 </template>
 
 <script>
 import Home from '@/views/Home.vue';
+import Subscription from '@/views/Subscription.vue';
+import AddSubscription from '@/views/AddSubscription.vue';
+import SourceBrowser from '@/views/SourceBrowser.vue';
+import Favorite from '@/views/Favorite.vue';
 import FullText from '@/views/FullText.vue';
 import FullPage from '@/views/FullPage.vue';
 
 export default {
   components: {
     Home,
+    Subscription,
+    AddSubscription,
+    SourceBrowser,
+    Favorite,
     FullText,
     FullPage,
   },

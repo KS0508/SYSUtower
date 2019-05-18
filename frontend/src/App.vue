@@ -8,38 +8,38 @@
           :tabBarGutter="6"
           :hideAdd="true"
           @edit="onTabEdit">
-          <a-tab-pane key="home" :closable="false">
+          <!--<a-tab-pane key="home" :closable="false">
             <span slot="tab" class="st-tab-text">
               <a-icon type="home" />首页
             </span>
-          </a-tab-pane>
-          <a-tab-pane v-for="(tab, key) in tabList" :key="key">
-            <span slot="tab" class="st-tab-text" :title="tab.name">
-              <a-icon :type="tab.type === 'fullText' ? 'read' : 'file-text'" />{{ tab.name }}
+          </a-tab-pane>-->
+          <a-tab-pane v-for="tabPos in tabListOrder"
+            :key="tabPos"
+            :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
+            <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name">
+              <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
             </span>
           </a-tab-pane>
         </a-tabs>
       </a-layout-header>
       <a-layout-content>
         <div class="st-view-container">
-          <tab
-            :tab="{'type': 'home', 'id': 'home'}"
-            :activeTab="activeTab" />
           <tab v-for="(tab, key) in tabList"
             :key="key"
             :tab="tab"
             :activeTab="activeTab" />
         </div>
       </a-layout-content>
-      <!--<a-layout-footer style="text-align: center">
+      <a-layout-footer style="text-align: center">
         SYSU Tower Project / Made with ❤
-      </a-layout-footer>-->
+      </a-layout-footer>
     </a-layout>
   </div>
 </template>
 
 <script>
 import Tab from '@/views/Tab.vue';
+import { mapState } from 'vuex';
 
 async function initializeData() {
   const homeData = await this.$request.api('GET', '/home?limit=5');
@@ -68,6 +68,10 @@ export default {
         this.$store.commit('updateTabList', value);
       },
     },
+    ...mapState([
+      'tabTypes',
+      'tabListOrder'
+    ])
   },
   methods: {
     onTabEdit(key, action) {
@@ -81,6 +85,10 @@ export default {
   },
 
   mounted() {
+    this.$store.commit('addTab', {
+      type: 'home',
+      id: 'home'
+    })
     initializeData.call(this);
   },
 };

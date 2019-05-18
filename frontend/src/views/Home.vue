@@ -1,7 +1,7 @@
 <template>
   <section class="st-view-home">
     <news-feed v-for="category in newsData" :key="category.id" :category="category" />
-    <a-button block size="large" icon="plus">添加订阅</a-button>
+    <a-button block size="large" icon="plus" @click.native="openAddSubscription">添加订阅</a-button>
   </section>
 </template>
 
@@ -20,6 +20,13 @@ export default {
     ...mapState([
       'newsData',
     ]),
+  },
+  methods: {
+    openAddSubscription() {
+      this.$store.commit('addTab', {
+        type: 'addSubscription'
+      })
+    }
   },
 };
 </script>

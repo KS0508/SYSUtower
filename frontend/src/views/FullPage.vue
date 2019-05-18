@@ -42,11 +42,11 @@ export default {
     this.$refs.webviewEl.setAttribute('src', this.tab.data.url);
     this.$refs.webviewEl.addEventListener('page-title-updated', (event) => {
       this.$store.commit('updateTabTitle', { id: this.tab.id, title: event.title });
-    })
+    });
     this.$refs.webviewEl.addEventListener('did-navigate', (event) => {
       this.$store.commit('updateTabURL', { id: this.tab.id, url: event.url });
       console.log(event.url);
-    })
+    });
   },
 };
 </script>

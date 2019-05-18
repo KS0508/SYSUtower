@@ -3,11 +3,12 @@
     <h1 class="st-ft-title">{{ news.title }}</h1>
     <p class="st-ft-info">
       <span class="st-ft-publish-date">发布时间：{{ news.publishDate }}</span> /
-      <span class="st-ft-fetch-time">抓取时间：{{ news.fetchTime }}</span>
+      <span class="st-ft-fetch-time">抓取时间：{{ news.fetchTime }}</span> /
+      <span class="st-ft-keywords">关键字：{{ news.keywords.join(', ') }}</span>
     </p>
     <div v-if="!news.content">
       <div>{{ news.excerpt }}</div>
-      <a-skeleton></a-skeleton>
+      <a-skeleton active></a-skeleton>
     </div>
     <div v-else v-html="news.content" />
   </div>
