@@ -59,6 +59,18 @@ def source_all():
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
+@client.route('/sources/count', methods = ['GET'])
+def src_count():
+    if request.method == 'GET' :
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+
+        sources = c.execute('SELECT COUNT (source_id) FROM SOURCE')
+        for row_src in sources :
+            return jsonify({'ret' : 0, 'data' : row_src[0]})
+    else :
+        return jsonify({'ret' : 1, 'data' : 'NULL'})
+
 @client.route('/sources/<int:id>', methods = ['GET'])
 def source_tar(id):
     print(id)
@@ -70,7 +82,7 @@ def source_tar(id):
         c_news = data.cursor()        
         src_list = []        
 
-        sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %d' % id)
+        sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %f' % id)
         for row_src in sources:
             news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY fetch_time DESC LIMIT %d OFFSET %d;' % (id, article_num, ((article_page - 1) * article_num)))
             news_list = []
@@ -110,14 +122,14 @@ def give_news(id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/subscription/',  methods = ['GET'])
+@client.route('/subscriptions/',  methods = ['GET'])
 def subscription():
     if request.method == 'GET' :
         fav_page = request.args.get('page', 1, type = int)
         fav_num = request.args.get('limit', 0, type = int)
         s_limit = ''
         if fav_num != 0 :
-            s_limit = 'LIMIT %d OFFSET %d' % (fav_num, (fav_page - 1) * fav_num)
+            s_limit = 'LIMIT ? OFFSET ?', (fav_num, (fav_page - 1) * fav_num)
 
         data = sqlite3.connect('test.db')
         c_src = data.cursor()
@@ -135,7 +147,7 @@ def subscription():
         '''
         # 我也不知道为什么这个不行
         for row_sub in sub:
-            sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %d;' % row_sub[0])
+            sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = ?;', row_sub[0])
             for row_src in sources:
                 sub_list.append({'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2]})
         '''
@@ -145,14 +157,25 @@ def subscription():
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/subscription/<int:src_id>', methods = ['POST'])
+@client.route('/subscriptions/count', methods = ['GET'])
+def sub_count():
+    if request.method == 'GET' :
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+        subscriptions = c.execute('SELECT COUNT (sub_id) FROM SUBSCRIPTION')
+        for row_sub in subscriptions :
+            return jsonify({'ret' : 0, 'data' : row_sub[0]})
+    else :
+        return jsonify({'ret' : 1, 'data' : 'NULL'})
+
+@client.route('/subscriptions/<int:src_id>', methods = ['POST'])
 def add_sub(src_id):
     if request.method == 'POST':
         data = sqlite3.connect('test.db')
         c = data.cursor()
         passport = 0
 
-        sources = c.execute('SELECT source_id FROM SOURCE WHERE source_id = %d;' % src_id)
+        sources = c.execute('SELECT source_id FROM SOURCE WHERE source_id = %d' % src_id)
         for row_src in sources :
             if row_src[0] == src_id:
                 passport = 1
@@ -166,7 +189,7 @@ def add_sub(src_id):
         if passport == 0 :
             return jsonify({'ret' : 242, 'data' : 'IS_ALREADY_SUBSCRIBED'})
 
-        c.execute('INSERT INTO SUBSCRIPTION (source_id, last_update_time) VALUES (%d, "%s");' % (src_id, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        c.execute('INSERT INTO SUBSCRIPTION (source_id, last_update_time) VALUES (?, ?);', (src_id, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         test = c.execute('SELECT * FROM SUBSCRIPTION WHERE source_id = %d;' % src_id)
         for row in test :
             print(row)
@@ -178,7 +201,7 @@ def add_sub(src_id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/subscription/<int:id>', methods = ['DELETE'])
+@client.route('/subscriptions/<int:id>', methods = ['DELETE'])
 def del_sub(id):
     if request.method == 'DELETE':
         data = sqlite3.connect('test.db')
@@ -209,7 +232,18 @@ def del_sub(id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/favorite/', methods = ['GET'])
+@client.route('/favorites/count', methods = ['GET'])
+def fav_count():
+    if request.method == 'GET' :
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+        favs = c.execute('SELECT COUNT (news_id) FROM NEWS WHERE is_bookmarked = 1')
+        for row_fav in favs :
+            return jsonify({'ret' : 0, 'data' : row_fav[0]})
+    else :
+        return jsonify({'ret' : 1, 'data' : 'NULL'})
+
+@client.route('/favorites/', methods = ['GET'])
 def fav_get():
     if request.method == 'GET' :
 
@@ -219,7 +253,7 @@ def fav_get():
         news_page = request.args.get('page', 1, type = int)
         s_limit = ''
         if news_num :
-            s_limit = 'LIMIT %d OFFSET %d' % (news_num, (news_page - 1) * news_num)
+            s_limit = 'LIMIT ? OFFSET ?', (news_num, (news_page - 1) * news_num)
         
         favorite = c.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE is_bookmarked = 1 ORDER BY fetch_time %s;' % s_limit)
         fav_list = []
@@ -233,7 +267,7 @@ def fav_get():
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/favorite/<int:id>', methods = ['POST'])
+@client.route('/favorites/<int:id>', methods = ['POST'])
 def add_fav(id):
     if request.method == 'POST':
         passport = 0
@@ -262,7 +296,7 @@ def add_fav(id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
-@client.route('/favorite/<int:id>', methods = ['DELETE'])
+@client.route('/favorites/<int:id>', methods = ['DELETE'])
 def del_fav(id):
     if request.method == 'DELETE':
         passport = 0
@@ -290,3 +324,4 @@ def del_fav(id):
             return jsonify({'ret' : 223, 'data' : 'IS_ALREADY_NOT_FAVORITE'})
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
+
