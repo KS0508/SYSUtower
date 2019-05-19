@@ -62,6 +62,7 @@ def parse(news_title, news_text):
     news_keyword_1 = find_keyword(news_title)
     news_keyword_2 = find_keyword(news_text)
     news_keyword = list(set(news_keyword_1).union(set(news_keyword_2)))
+    news_keyword_str = '，'.join(news_keyword)
     news_sentences_list = split_sentence(news_text)
     news_abstract = find_abstract(news_sentences_list)
-    return [news_abstract, news_keyword]
+    return [news_abstract, news_keyword_str]
