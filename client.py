@@ -194,7 +194,6 @@ def add_sub(src_id):
         c.execute('INSERT INTO SUBSCRIPTION (source_id, last_update_time) VALUES (?, ?);', (src_id, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         test = c.execute('SELECT * FROM SUBSCRIPTION WHERE source_id = %d;' % src_id)
         for row in test :
-            print(row)
         data.commit()
         c.close()
         data.close()

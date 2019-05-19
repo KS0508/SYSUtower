@@ -7,10 +7,10 @@ import Parser
 def search_news(title_url):
     data = sqlite3.connect('test.db')
     c = data.cursor()
-    tar = c.execute('SELECT COUNT(news_id) FROM NEWS WHERE news_title = ? AND news_address = ?;', (title_url['news_title'], title_url['news_address']))
+    tar = c.execute('SELECT news_id FROM NEWS WHERE news_title = ? AND news_address = ?;', (title_url['news_title'], title_url['news_address']))
     for rw in tar :
-        if rw[0] :
-            return 0
+        # print(title_url['news_title'] + '\t%d' % rw[0])
+        return 0
     return 1
 
 def search_source(src_id):
