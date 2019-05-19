@@ -80,7 +80,7 @@ def source_tar(id):
         data = sqlite3.connect('test.db')
         c_src = data.cursor()
         c_news = data.cursor()        
-        src_list = []        
+        src_list = {}        
 
         sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %f' % id)
         for row_src in sources:
@@ -89,7 +89,7 @@ def source_tar(id):
 
             for row_new in news:
                 news_list.append({'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
-            src_list.append({'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list})
+            src_list = {'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list}
     
         c_src.close()
         c_news.close()
