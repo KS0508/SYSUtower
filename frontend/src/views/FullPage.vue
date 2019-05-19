@@ -1,10 +1,11 @@
 <template>
-  <div class="st-view-fullpage" v-once>
+  <div class="st-view-fullpage">
     <div class="st-fp-control-bar">
-      <a-input v-model="inputUrl" />
+      <a-input :value="currentLocation"/>
       <a-button-group>
-        <a-button icon="reload">刷新</a-button>
-        <a-button icon="paper-clip">复制链接</a-button>
+        <a-button icon="reload" @click.native="doRefresh">刷新</a-button>
+        <a-button icon="paper-clip" @click.native="doCopy">复制链接</a-button>
+        <!--<a-button icon="paper-clip" @click.native="doDebug">Debug</a-button>-->
       </a-button-group>
     </div>
     <keep-alive>
@@ -18,19 +19,34 @@ export default {
   props: [
     'tab',
   ],
-  data() {
-    return {
-      inputUrl: this.tab.data.url,
-    };
+  computed: {
+    currentLocation() {
+      return this.$store.state.tabList[this.tab.id].data.url;
+    },
+  },
+  methods: {
+    doRefresh() {
+      this.$refs.webviewEl.reload();
+    },
+    doCopy() {
+      require('electron').clipboard.writeText(this.$refs.webviewEl.getURL());
+      this.$message.success('链接已复制 🎉');
+    },
+    doDebug() {
+      console.log('currentLocation', this.currentLocation);
+      console.log('$store', this.$store.state.tabList[this.tab.id].data.url);
+    },
   },
 
-  mounted () {
-    console.log(this.$refs.webviewEl);
+  mounted() {
     this.$refs.webviewEl.setAttribute('src', this.tab.data.url);
-  },
-
-  beforeUpdate() {
-    console.log('Im going to update');
+    this.$refs.webviewEl.addEventListener('page-title-updated', (event) => {
+      this.$store.commit('updateTabTitle', { id: this.tab.id, title: event.title });
+    });
+    this.$refs.webviewEl.addEventListener('did-navigate', (event) => {
+      this.$store.commit('updateTabURL', { id: this.tab.id, url: event.url });
+      console.log(event.url);
+    });
   },
 };
 </script>
