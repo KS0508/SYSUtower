@@ -22,6 +22,7 @@ export default function install(Vue) {
         request.on('response', (res) => {
           res.on('end', () => {
             let resJSON;
+            console.log(resData);
             try {
               resJSON = JSON.parse(resData);
             } catch (err) {

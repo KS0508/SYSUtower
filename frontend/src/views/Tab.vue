@@ -1,11 +1,17 @@
 <template>
   <div class="st-view-tab"
     :style="{display: tab.id === activeTab ? 'block' : 'none'}">
+    <a-alert v-if="mayObsolute[tab.type]"
+      banner>
+      数据可能已经过期，请刷新本页以获取最新数据。
+    </a-alert>
     <component :is="tab.type" :tab="tab" />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import Home from '@/views/Home.vue';
 import Subscription from '@/views/Subscription.vue';
 import AddSubscription from '@/views/AddSubscription.vue';
@@ -28,6 +34,11 @@ export default {
     'tab',
     'activeTab',
   ],
+  computed: {
+    ...mapState([
+      'mayObsolute'
+    ])
+  }
 };
 </script>
 

@@ -3,9 +3,10 @@
     <h1>订阅管理</h1>
     <a-list
       :dataSource="subscription"
-      itemLayout="horizontal">
+      itemLayout="horizontal"
+      :locale="{emptyText: '现在还没有订阅任何新闻源...不考虑添加一个吗朋友'}">
       <a-list-item slot="renderItem" slot-scope="source, index" key="source.id">
-        <a-popconfirm 
+        <a-popconfirm
           slot="actions"
           title="确定要取消订阅么？"
           @confirm="deleteSubscription(index)"
@@ -22,25 +23,25 @@
 
 <script>
 async function initializeSubscription() {
-  const subscriptionData = await this.$request.api('GET', `/subscriptions`);
+  const subscriptionData = await this.$request.api('GET', '/subscriptions');
   this.subscription = subscriptionData;
-} 
+}
 
 export default {
   props: [
-    'tab'
+    'tab',
   ],
   data() {
     return {
-      subscription: []
-    }
+      subscription: [],
+    };
   },
   methods: {
     openSource(index) {
       this.$store.commit('addTab', {
         type: 'sourceBrowser',
         name: `${this.source[index].name} - ${this.source[index].department}`,
-        data: this.source[index]
+        data: this.source[index],
       });
     },
     async deleteSubscription(index) {
@@ -51,24 +52,25 @@ export default {
       } else {
         this.$message.error('取消收藏失败...');
       }
-    }
+    },
   },
   mounted() {
     initializeSubscription.call(this);
-  }
-}
+  },
+};
 </script>
 
-<style>
+<style lang="less">
   .st-view-subscription {
     padding: 24px;
-  }
-  .ant-list-item-action {
-    margin-left: 12px;
-  }
-  .ant-list-item-content {
-    flex: 0;
-    min-width: fit-content;
-    padding: 0 4px;
+
+    .ant-list-item-action {
+      margin-left: 12px;
+    }
+    .ant-list-item-content {
+      flex: 0;
+      min-width: fit-content;
+      padding: 0 4px;
+    }
   }
 </style>

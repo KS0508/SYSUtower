@@ -8,11 +8,6 @@
           :tabBarGutter="6"
           :hideAdd="true"
           @edit="onTabEdit">
-          <!--<a-tab-pane key="home" :closable="false">
-            <span slot="tab" class="st-tab-text">
-              <a-icon type="home" />首页
-            </span>
-          </a-tab-pane>-->
           <a-tab-pane v-for="tabPos in tabListOrder"
             :key="tabPos"
             :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
@@ -20,6 +15,33 @@
               <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
             </span>
           </a-tab-pane>
+          <div slot="tabBarExtraContent">
+            <a-tooltip title="首页">
+              <a-button 
+                class="st-tab-extra-btn" 
+                shape="circle" size="small" icon="home"
+                @click.native="openFunctionTab('home')" />
+            </a-tooltip>
+            <a-tooltip title="刷新订阅" placement="bottom">
+              <a-button 
+                class="st-tab-extra-btn"
+                shape="circle"
+                size="small"
+                :icon="loading ? 'loading': 'reload'"
+                :disabled="loading ? true : false"
+                @click.native="doRefresh" />
+            </a-tooltip>
+            <a-tooltip title="我的订阅">
+              <a-button class="st-tab-extra-btn"
+                shape="circle" size="small" icon="user"
+                @click.native="openFunctionTab('addSubscription')" />
+            </a-tooltip>
+            <a-tooltip title="收藏夹">
+              <a-button class="st-tab-extra-btn"
+                shape="circle" size="small" icon="star"
+                @click.native="openFunctionTab('favorite')" />
+            </a-tooltip>
+          </div>
         </a-tabs>
       </a-layout-header>
       <a-layout-content>
@@ -30,9 +52,6 @@
             :activeTab="activeTab" />
         </div>
       </a-layout-content>
-      <a-layout-footer style="text-align: center">
-        SYSU Tower Project / Made with ❤
-      </a-layout-footer>
     </a-layout>
   </div>
 </template>
@@ -42,13 +61,19 @@ import Tab from '@/views/Tab.vue';
 import { mapState } from 'vuex';
 
 async function initializeData() {
-  const homeData = await this.$request.api('GET', '/home?limit=5');
+  const homeData = await this.$request.api('GET', '/home?limit=6');
   this.$store.commit('setNewsData', homeData);
 }
 
 export default {
   components: {
     Tab,
+  },
+
+  data() {
+    return {
+      loading: false,
+    };
   },
 
   computed: {
@@ -70,8 +95,8 @@ export default {
     },
     ...mapState([
       'tabTypes',
-      'tabListOrder'
-    ])
+      'tabListOrder',
+    ]),
   },
   methods: {
     onTabEdit(key, action) {
@@ -81,6 +106,25 @@ export default {
     },
     debug(type) {
       console.log(type);
+    },
+    async doRefresh() {
+      this.loading = true;
+      try {
+        const data = await this.$request.api('POST', '/refresh');
+        if (data === 'SUCCESS') {
+          this.$message.success('刷新订阅成功👏');
+        } else {
+          throw data;
+        }
+        initializeData.call(this);
+      } catch (e) {
+        this.$message.error(`发生了错误 QwQ：${e}`);
+      }
+      this.loading = false;
+    },
+
+    openFunctionTab(type) {
+      this.$store.commit('addTab', { type });
     },
   },
 
@@ -95,6 +139,9 @@ export default {
 </script>
 
 <style lang="less">
+* {
+  -webkit-user-select: none;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -127,7 +174,7 @@ export default {
 
 .ant-layout-header {
   background: transparent;
-  padding: 12px 12px 0 12px;
+  padding: 12px 24px 0 12px;
   height: auto;
 }
 
@@ -146,6 +193,10 @@ export default {
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+}
+
+.st-tab-extra-btn {
+  margin: 0 2px;
 }
 
 .st-view-container {

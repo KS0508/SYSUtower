@@ -19,7 +19,7 @@ let isQuitting = false;
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 
 // Disable menu
-// Menu.setApplicationMenu(null);
+Menu.setApplicationMenu(null);
 
 function createWindow() {
   // Create the browser window.
@@ -60,6 +60,10 @@ function createWindow() {
     event.preventDefault();
     win.hide();
   });
+
+  win.webContents.session.on('will-download', (event, item, webContents) => {
+    item.setSaveDialogOptions
+  })
 }
 
 app.on('before-quit', () => {

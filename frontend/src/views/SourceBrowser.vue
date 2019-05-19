@@ -4,7 +4,8 @@
 
     <a-list
       :dataSource="source.news"
-      itemLayout="horizontal">
+      itemLayout="horizontal"
+      :locale="{emptyText: '还没有新闻'}">
       <a-list-item slot="renderItem" slot-scope="news, index" key="news.id">
         <a-list-item-meta>
           <a slot="title" @click="openNews(index)">{{ news.title }}</a>
@@ -24,37 +25,38 @@ async function initializeSource() {
 
 export default {
   props: [
-    'tab'
+    'tab',
   ],
   data() {
     return {
       source: {
-        ...this.tab.data
-      }
-    }
+        ...this.tab.data,
+      },
+    };
   },
   methods: {
     openNews(index) {
       this.$store.commit('addTab', {
         type: 'fullText',
         name: this.source.news[index].title,
-        data: this.source.news[index]
+        data: this.source.news[index],
       });
-    }
+    },
   },
   mounted() {
     initializeSource.call(this);
-  }
-}
+  },
+};
 </script>
 
-<style>
+<style lang="less">
   .st-view-source {
     padding: 24px;
-  }
-  .ant-list-item-content {
-    flex: 0;
-    min-width: fit-content;
-    padding: 0 4px;
+
+    .ant-list-item-content {
+      flex: 0;
+      min-width: fit-content;
+      padding: 0 4px;
+    }
   }
 </style>

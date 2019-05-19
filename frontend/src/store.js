@@ -29,12 +29,13 @@ export default new Vuex.Store({
       },
       sourceBrowser: {
         name: '分类浏览',
-        icon: 'home',
+        icon: 'bars',
         single: false,
+        singleDataField: 'id',
         priority: 4,
       },
       favorite: {
-        name: '收藏管理',
+        name: '收藏夹',
         icon: 'star',
         single: true,
         priority: 3,
@@ -48,7 +49,7 @@ export default new Vuex.Store({
       },
       fullPage: {
         name: '原文浏览',
-        icon: 'full-text',
+        icon: 'file-text',
         single: false,
         singleDataField: 'url',
         priority: 6,
@@ -59,6 +60,29 @@ export default new Vuex.Store({
     activeTab: 'home',
     tabList: {},
     tabListOrder: [],
+
+    homeGrid: {
+      gutter: 16,
+      xs: 1,
+      sm: 1,
+      md: 2,
+      lg: 3,
+      xl: 4,
+      xxl: 6,
+    },
+    subscriptionGrid: {
+      gutter: 16,
+      xs: 1,
+      sm: 2,
+      md: 3,
+      lg: 4,
+    },
+
+    mayObsolute: {
+      'home': false,
+      'addSubscription': false,
+      'favorite': false,
+    },
 
     tabIncrement: 0,
   },
@@ -75,13 +99,12 @@ export default new Vuex.Store({
       if (currentTabType.single) {
         existTab = tabArray.find(obj => obj[1].type === tab.type);
       } else {
-        existTab = tabArray.find(obj =>
-          (obj[1].type === tab.type) &&
-          (obj[1].data[currentTabType.singleDataField] === tab.data[currentTabType.singleDataField]));
+        existTab = tabArray.find(obj => (obj[1].type === tab.type)
+          && (obj[1].data[currentTabType.singleDataField] === tab.data[currentTabType.singleDataField]));
       }
 
       state.lastActiveTab = state.activeTab;
-      
+
       if (existTab) {
         state.activeTab = existTab[0];
       } else {
@@ -113,14 +136,14 @@ export default new Vuex.Store({
     updateTabList(state, tabList) {
       state.tabList = tabList;
     },
-    updateTabTitle(state, {id, title}) {
+    updateTabTitle(state, { id, title }) {
       Vue.set(state.tabList[id], 'name', title);
       console.log(id, title);
     },
-    updateTabURL(state, {id, url}) {
+    updateTabURL(state, { id, url }) {
       Vue.set(state.tabList[id].data, 'url', url);
       console.log(id, url);
-    }
+    },
   },
   actions: {
 

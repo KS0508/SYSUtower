@@ -1,39 +1,41 @@
 <template>
   <div class="category">
-    <h2 
+    <h2
       class="st-nf-title"
       @click="openSourceBrowser">
       {{ category.name }} - {{ category.department }}
-      <!--<a-button
-        class="st-nf-btn-enter"
-        type="normal"
-        shape="circle"
-        icon="right"
-        size="small" />-->
-      <a-icon 
+      <a-icon
         type="right"
         class="st-nf-btn-enter" />
     </h2>
-    <a-row :gutter="16">
-      <a-col v-for="news in newsList" :key="news.id" :span="8">
+    <a-list
+      :grid="homeGrid"
+      :dataSource="newsList"
+      :locale="{emptyText: '还没有新闻'}"
+    >
+      <a-list-item slot="renderItem" slot-scope="news" :key="news.id">
         <news-item :news="news" />
-      </a-col>
-    </a-row>
+      </a-list-item>
+    </a-list>
   </div>
 </template>
 
 <script>
 import NewsItem from '@/components/NewsItem.vue';
+import { mapState } from 'vuex';
 
 export default {
   components: {
     NewsItem,
   },
-  props: ['category'],
+  props: ['category', 'count'],
   computed: {
     newsList() {
-      return this.category.news.slice(0, 3);
+      return this.count ? this.category.news.slice(0, this.count) : this.category.news;
     },
+    ...mapState([
+      'homeGrid',
+    ]),
   },
   methods: {
     openSourceBrowser() {
@@ -41,13 +43,13 @@ export default {
         type: 'sourceBrowser',
         name: `${this.category.name} - ${this.category.department}`,
         data: this.category,
-      })
+      });
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
   .category {
     margin-bottom: 36px;
   }
@@ -55,7 +57,7 @@ export default {
     cursor: pointer;
   }
   .st-nf-btn-enter {
-    margin-left: 6px;
+    /* margin-left: 4px; */
     font-size: 85%;
   }
 </style>

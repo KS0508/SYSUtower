@@ -3,11 +3,13 @@
     <h1>收藏夹</h1>
     <a-list
       :dataSource="favorite"
-      itemLayout="horizontal">
+      itemLayout="horizontal"
+      :locale="{emptyText: '好像没有收藏了的新闻'}">
       <a-list-item slot="renderItem" slot-scope="news, index" key="news.id">
-        <a-popconfirm 
+        <a-popconfirm
           slot="actions"
           title="确定要取消收藏这条新闻么？"
+          placement="left"
           @confirm="deleteFavorite(index)"
           okText="是的" cancelText="不了">
           <a>取消收藏</a>
@@ -23,25 +25,25 @@
 
 <script>
 async function initializeFavorite() {
-  const favoriteData = await this.$request.api('GET', `/favorites`);
+  const favoriteData = await this.$request.api('GET', '/favorites');
   this.favorite = favoriteData;
-} 
+}
 
 export default {
   props: [
-    'tab'
+    'tab',
   ],
   data() {
     return {
-      favorite: []
-    }
+      favorite: [],
+    };
   },
   methods: {
     openNews(index) {
       this.$store.commit('addTab', {
         type: 'fullText',
         name: this.favorite[index].title,
-        data: this.favorite[index]
+        data: this.favorite[index],
       });
     },
     async deleteFavorite(index) {
@@ -52,24 +54,25 @@ export default {
       } else {
         this.$message.error('取消收藏失败...');
       }
-    }
+    },
   },
   mounted() {
     initializeFavorite.call(this);
-  }
-}
+  },
+};
 </script>
 
-<style>
+<style lang="less">
   .st-view-favorite {
     padding: 24px;
-  }
-  .ant-list-item-action {
-    margin-left: 12px;
-  }
-  .ant-list-item-content {
-    flex: 0;
-    min-width: fit-content;
-    padding: 0 4px;
+
+    .ant-list-item-action {
+      margin-left: 12px;
+    }
+    .ant-list-item-content {
+      flex: 0;
+      min-width: fit-content;
+      padding: 0 4px;
+    }
   }
 </style>
