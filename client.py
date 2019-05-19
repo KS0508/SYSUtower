@@ -1,6 +1,8 @@
 # !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import json
+import spider
+import spiderqaq
 import time
 from flask import Flask
 from flask import request
@@ -26,7 +28,7 @@ def home():
         src_list = []        
         
         for row_src in sources:
-            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY fetch_time DESC LIMIT %d;' % (row_src[0], article_num))
+            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY news_id DESC LIMIT %d;' % (row_src[0], article_num))
             news_list = []
 
             for row_new in news:
@@ -84,7 +86,7 @@ def source_tar(id):
 
         sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %f' % id)
         for row_src in sources:
-            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY fetch_time DESC LIMIT %d OFFSET %d;' % (id, article_num, ((article_page - 1) * article_num)))
+            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY news_id DESC LIMIT %d OFFSET %d;' % (id, article_num, ((article_page - 1) * article_num)))
             news_list = []
 
             for row_new in news:
@@ -121,6 +123,23 @@ def give_news(id):
         
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
+
+@client.route('/news_del/<int:news_id>', methods = ['DELETE'])
+def del_news(news_id):
+    if request.method == 'DELETE':
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+        news = c.execute('SELECT news_id FROM NEWS WHERE news_id = %d;' % news_id)
+        for row_new in news:
+            c.execute('DELETE FROM NEWS WHERE news_id = %d' % news_id)
+            data.commit()
+            c.close()
+            data.close()
+            return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
+        return jsonify({'ret' : 222, 'data' : 'NEWS_NOT_FOUND'})
+    else :
+        return jsonify({'ret' : 1, 'data' : 'NULL'})
+   
 
 @client.route('/subscriptions/',  methods = ['GET'])
 def subscription():
@@ -192,11 +211,10 @@ def add_sub(src_id):
         c.execute('INSERT INTO SUBSCRIPTION (source_id, last_update_time) VALUES (?, ?);', (src_id, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         test = c.execute('SELECT * FROM SUBSCRIPTION WHERE source_id = %d;' % src_id)
         for row in test :
-            print(row)
-        data.commit()
-        c.close()
-        data.close()
-        return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
+            data.commit()
+            c.close()
+            data.close()
+            return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
 
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
@@ -325,3 +343,21 @@ def del_fav(id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
+@client.route('/refresh', methods = ['POST'])
+def refresh():
+    if request.method == 'POST' :
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+        src_ids_list = []
+        src_id = c.execute('SELECT source_id FROM SUBSCRIPTION ORDER BY source_id;')
+        for row_id in src_id :
+            src_ids_list.append(row_id[0])
+        c.close()
+        data.close()
+        test = spiderqaq.Spider(src_ids_list)
+        if test.crawler() :
+            return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
+
+        return     
+    else :
+        return jsonify({"ret": 456,  "data": "ALREADY_IN_PROGRESS"})
