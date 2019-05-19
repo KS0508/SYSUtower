@@ -1,6 +1,7 @@
 # !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import sqlite3
+import parser
 
 
 def search_news(title_url):
@@ -22,9 +23,10 @@ def search_source(src_id):
 
 
 def insert_news(news_info):
+    abs_kw = parser.parse(news_info['news_title'], news_info['news_text'])
     data = sqlite3.connect('test.db')
     c = data.cursor()
-    c.execute('INSERT INTO NEWS (source_id, news_title, news_text, publish_date, fetch_time, is_bookmarked, news_abstract, news_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?);', (news_info['source_id'], news_info['news_title'], news_info['news_text'], news_info['publish_date'], news_info['fetch_time'], 0, news_info['news_abstract'], news_info['news_address']))
+    c.execute('INSERT INTO NEWS (source_id, news_title, news_text, publish_date, fetch_time, is_bookmarked, news_abstract, news_address, news_keyword) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);', (news_info['source_id'], news_info['news_title'], news_info['news_text'], news_info['publish_date'], news_info['fetch_time'], 0, abs_kw[0], news_info['news_address'], abs_kw[1]))
     
     news_id = 0
     news_ids = c.execute('SELECT news_id FROM NEWS ORDER BY news_id DESC')

@@ -14,7 +14,7 @@ client = Flask(__name__)
 news 仅包括 id, title, publishDate, fetchTime, is_favorite/is_bookmarked, keywords, excerpt, url；不包括 content, attachments。
 '''
 @client.route('/home', methods = ['GET'])
-def home_test():
+def home():
     if request.method == 'GET':
         article_num = request.args.get('limit', 5, type = int)
 
@@ -22,7 +22,7 @@ def home_test():
         c_source = data.cursor()
         c_news = data.cursor()
 
-        sources = c_source.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE ORDER BY source_id ASC;')
+        sources = c_source.execute('SELECT * FROM SOURCE INNER JOIN SUBSCRIPTION ON SOURCE.source_id = SUBSCRIPTION.source_id ORDER BY source_id ASC;')
         src_list = []        
         
         for row_src in sources:
@@ -31,7 +31,7 @@ def home_test():
 
             for row_new in news:
                 news_list.append({'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
-            src_list.append({'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list})
+            src_list.append({'id' : row_src[0], 'name' : row_src[2], 'department' : row_src[1], 'news' : news_list})
         
         c_source.close()
         c_news.close()
@@ -80,7 +80,7 @@ def source_tar(id):
         data = sqlite3.connect('test.db')
         c_src = data.cursor()
         c_news = data.cursor()        
-        src_list = []        
+        src_list = {}        
 
         sources = c_src.execute('SELECT source_id, source_sub_name, source_department_name FROM SOURCE WHERE source_id = %f' % id)
         for row_src in sources:
@@ -89,7 +89,7 @@ def source_tar(id):
 
             for row_new in news:
                 news_list.append({'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
-            src_list.append({'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list})
+            src_list = {'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list}
     
         c_src.close()
         c_news.close()
@@ -306,7 +306,7 @@ def del_fav(id):
         for row_news_sub in news_sub :
             if row_news_sub[0] == id :
                 passport = 1
-                if row_news_sub[1] == 1:
+                if row_news_sub[1] == 0:
                     passport = 2
         if passport == 1 :
             c.execute('UPDATE NEWS SET is_bookmarked = 0 WHERE news_id = %d;' % id)
