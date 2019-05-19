@@ -1,18 +1,19 @@
-
-
 import {
-  app, protocol, BrowserWindow, Menu,
+  app, protocol, BrowserWindow, Menu, Tray,
 } from 'electron';
 import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
+import path from 'path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let tray;
+let isQuitting = false;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
@@ -23,8 +24,9 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: tru
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 960,
+    height: 640,
+    icon: path.join(__static, 'icon.ico'),
     webPreferences: {
       nodeIntegration: true,
       webviewTag: true,
@@ -41,10 +43,28 @@ function createWindow() {
     win.loadURL('app://./index.html');
   }
 
+  win.on('close', (event) => {
+    if (!isQuitting) {
+      event.preventDefault();
+      win.minimize();
+    }
+
+    event.returnValue = false;
+  });
+
   win.on('closed', () => {
     win = null;
+  })
+
+  win.on('minimize', (event) => {
+    event.preventDefault();
+    win.hide();
   });
 }
+
+app.on('before-quit', () => {
+  isQuitting = true;
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -76,6 +96,23 @@ app.on('ready', async () => {
     }
   }
   createWindow();
+  tray = new Tray(path.join(__static, 'icon.ico'));
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: '显示主界面',
+      click: () => win.show(),
+    },
+    {
+      label: '退出应用',
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      },
+    }
+  ]));
+  tray.on('double-click', () => {
+    win.show();
+  })
 });
 
 // Exit cleanly on request from parent process in development mode.

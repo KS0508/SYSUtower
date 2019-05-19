@@ -55,8 +55,8 @@ export default new Vuex.Store({
       },
     },
 
-    lastActiveTab: '0home',
-    activeTab: '0home',
+    lastActiveTab: 'home',
+    activeTab: 'home',
     tabList: {},
     tabListOrder: [],
 
@@ -80,15 +80,16 @@ export default new Vuex.Store({
           (obj[1].data[currentTabType.singleDataField] === tab.data[currentTabType.singleDataField]));
       }
 
+      state.lastActiveTab = state.activeTab;
+      
       if (existTab) {
-        state.lastActiveTab = state.activeTab;
         state.activeTab = existTab[0];
       } else {
         if (currentTabType.single) {
-          tab.id = `${currentTabType.priority}${tab.type}`;
+          tab.id = `${tab.type}`;
         } else {
           state.tabIncrement += 1;
-          tab.id = `${currentTabType.priority}${state.tabIncrement}`;
+          tab.id = `${state.tabIncrement}`;
         }
         Vue.set(state.tabList, tab.id, tab);
         state.tabListOrder.push(tab.id);
@@ -100,9 +101,9 @@ export default new Vuex.Store({
       state.tabListOrder.splice(state.tabListOrder.indexOf(tabKey), 1);
 
       if (state.activeTab === tabKey) {
-        state.activeTab = state.tabList[state.lastActiveTab] ? state.lastActiveTab : '0home';
+        state.activeTab = state.tabList[state.lastActiveTab] ? state.lastActiveTab : 'home';
       } else {
-        state.lastActiveTab = '0home';
+        state.lastActiveTab = 'home';
       }
     },
     updateActiveTab(state, tabKey) {
