@@ -1,9 +1,7 @@
 const { net } = require('electron').remote; // eslint-disable-line import/no-extraneous-dependencies
 
 const ST_HOST = '172.18.40.173';
-const ST_PORT = 777;
-// const ST_HOST = 'localhost';
-// const ST_PORT = '8000';
+const ST_PORT = 5000;
 
 export default function install(Vue) {
   Vue.prototype.$request = { // eslint-disable-line no-param-reassign
@@ -21,20 +19,7 @@ export default function install(Vue) {
 
         request.on('response', (res) => {
           res.on('end', () => {
-            let resJSON;
-            console.log(resData);
-            try {
-              resJSON = JSON.parse(resData);
-            } catch (err) {
-              reject(err);
-            }
-
-            if (resJSON.ret !== 0) {
-              reject(resJSON.data);
-              console.log(resJSON);
-            } else {
-              resolve(resJSON.data);
-            }
+            resolve(resData);
           });
           res.on('data', (chunk) => {
             resData = `${resData}${chunk}`;

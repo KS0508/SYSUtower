@@ -1,63 +1,26 @@
 <template>
   <div class="category">
-    <h2
-      class="st-nf-title"
-      @click="openSourceBrowser">
-      {{ category.name }} - {{ category.department }}
-      <a-icon
-        type="right"
-        class="st-nf-btn-enter" />
-    </h2>
-    <a-list
-      :grid="homeGrid"
-      :dataSource="newsList"
-      :locale="{emptyText: '还没有新闻'}"
-    >
-      <a-list-item slot="renderItem" slot-scope="news" :key="news.id">
+    <h2 class="ant-typography">{{ category.name }} - {{ category.department }}</h2>
+    <a-row :gutter="16">
+      <a-col v-for="news in newsList" :key="news.id" :span="8">
         <news-item :news="news" />
-      </a-list-item>
-    </a-list>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
 <script>
 import NewsItem from '@/components/NewsItem.vue';
-import { mapState } from 'vuex';
 
 export default {
   components: {
     NewsItem,
   },
-  props: ['category', 'count'],
+  props: ['category'],
   computed: {
     newsList() {
-      return this.count ? this.category.news.slice(0, this.count) : this.category.news;
-    },
-    ...mapState([
-      'homeGrid',
-    ]),
-  },
-  methods: {
-    openSourceBrowser() {
-      this.$store.commit('addTab', {
-        type: 'sourceBrowser',
-        name: `${this.category.name} - ${this.category.department}`,
-        data: this.category,
-      });
+      return this.category.news.slice(0, 3);
     },
   },
 };
 </script>
-
-<style scoped>
-  .category {
-    margin-bottom: 36px;
-  }
-  .st-nf-title {
-    cursor: pointer;
-  }
-  .st-nf-btn-enter {
-    /* margin-left: 4px; */
-    font-size: 85%;
-  }
-</style>
