@@ -7,28 +7,124 @@ export default new Vuex.Store({
   state: {
     newsData: [],
 
+    tabTypes: {
+      home: {
+        name: '首页',
+        icon: 'home',
+        single: true,
+        priority: 0,
+        prohibitClose: true,
+      },
+      subscription: {
+        name: '订阅管理',
+        icon: 'home',
+        single: true,
+        priority: 2,
+      },
+      addSubscription: {
+        name: '添加订阅',
+        icon: 'plus',
+        single: true,
+        priority: 1,
+      },
+      sourceBrowser: {
+        name: '分类浏览',
+        icon: 'bars',
+        single: false,
+        singleDataField: 'id',
+        priority: 4,
+      },
+      favorite: {
+        name: '收藏夹',
+        icon: 'star',
+        single: true,
+        priority: 3,
+      },
+      fullText: {
+        name: '阅读全文',
+        icon: 'read',
+        single: false,
+        singleDataField: 'id',
+        priority: 5,
+      },
+      fullPage: {
+        name: '原文浏览',
+        icon: 'file-text',
+        single: false,
+        singleDataField: 'url',
+        priority: 6,
+      },
+    },
+
     lastActiveTab: 'home',
     activeTab: 'home',
-    tabList: [],
+    tabList: {},
+    tabListOrder: [],
+
+    homeGrid: {
+      gutter: 16,
+      xs: 1,
+      sm: 1,
+      md: 2,
+      lg: 3,
+      xl: 4,
+      xxl: 6,
+    },
+    subscriptionGrid: {
+      gutter: 16,
+      xs: 1,
+      sm: 2,
+      md: 3,
+      lg: 4,
+    },
+
+    mayObsolute: {
+      'home': false,
+      'addSubscription': false,
+      'favorite': false,
+    },
+
     tabIncrement: 0,
   },
   mutations: {
-    setNewsData (state, data) {
+    setNewsData(state, data) {
       state.newsData = data;
     },
     addTab(state, tab) {
-      state.tabIncrement += 1;
-      tab.id = state.tabIncrement;
-      state.tabList.push(tab);
-      state.activeTab = `${tab.type}${tab.id}`;
+      const tabArray = Object.entries(state.tabList);
+      let existTab;
+
+      const currentTabType = state.tabTypes[tab.type];
+
+      if (currentTabType.single) {
+        existTab = tabArray.find(obj => obj[1].type === tab.type);
+      } else {
+        existTab = tabArray.find(obj => (obj[1].type === tab.type)
+          && (obj[1].data[currentTabType.singleDataField] === tab.data[currentTabType.singleDataField]));
+      }
+
+      state.lastActiveTab = state.activeTab;
+
+      if (existTab) {
+        state.activeTab = existTab[0];
+      } else {
+        if (currentTabType.single) {
+          tab.id = `${tab.type}`;
+        } else {
+          state.tabIncrement += 1;
+          tab.id = `${state.tabIncrement}`;
+        }
+        Vue.set(state.tabList, tab.id, tab);
+        state.tabListOrder.push(tab.id);
+        state.activeTab = tab.id;
+      }
     },
     removeTab(state, tabKey) {
-      const tabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === tabKey);
-      state.tabList.splice(tabPos, 1);
+      Vue.delete(state.tabList, tabKey);
+      state.tabListOrder.splice(state.tabListOrder.indexOf(tabKey), 1);
 
-      const lastTabPos = state.tabList.findIndex(tab => (`${tab.type}${tab.id}`) === state.lastActiveTab);
       if (state.activeTab === tabKey) {
-        state.activeTab = lastTabPos === -1 ? 'home' : state.lastActiveTab;
+        state.activeTab = state.tabList[state.lastActiveTab] ? state.lastActiveTab : 'home';
       } else {
         state.lastActiveTab = 'home';
       }
@@ -39,6 +135,14 @@ export default new Vuex.Store({
     },
     updateTabList(state, tabList) {
       state.tabList = tabList;
+    },
+    updateTabTitle(state, { id, title }) {
+      Vue.set(state.tabList[id], 'name', title);
+      console.log(id, title);
+    },
+    updateTabURL(state, { id, url }) {
+      Vue.set(state.tabList[id].data, 'url', url);
+      console.log(id, url);
     },
   },
   actions: {

@@ -5,61 +5,75 @@
         <a-tabs
           v-model="activeTab"
           type="editable-card"
+          :tabBarGutter="6"
+          :hideAdd="true"
           @edit="onTabEdit">
-          <a-tab-pane tab="Home" key="home" :closable="false">
-            <!--<keep-alive>
-              <home />
-            </keep-alive>-->
+          <a-tab-pane v-for="tabPos in tabListOrder"
+            :key="tabPos"
+            :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
+            <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name">
+              <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
+            </span>
           </a-tab-pane>
-          <a-tab-pane v-for="tab in tabList" :tab="tab.name" :key="tab.type + tab.id">
-              <!--<keep-alive>
-                <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-                <full-page v-if="tab.type === 'fullPage'" :tab="tab" />
-              </keep-alive>-->
-          </a-tab-pane>
+          <div slot="tabBarExtraContent">
+            <a-tooltip title="首页">
+              <a-button 
+                class="st-tab-extra-btn" 
+                shape="circle" size="small" icon="home"
+                @click.native="openFunctionTab('home')" />
+            </a-tooltip>
+            <a-tooltip title="刷新订阅" placement="bottom">
+              <a-button 
+                class="st-tab-extra-btn"
+                shape="circle"
+                size="small"
+                :icon="loading ? 'loading': 'reload'"
+                :disabled="loading ? true : false"
+                @click.native="doRefresh" />
+            </a-tooltip>
+            <a-tooltip title="我的订阅">
+              <a-button class="st-tab-extra-btn"
+                shape="circle" size="small" icon="user"
+                @click.native="openFunctionTab('addSubscription')" />
+            </a-tooltip>
+            <a-tooltip title="收藏夹">
+              <a-button class="st-tab-extra-btn"
+                shape="circle" size="small" icon="star"
+                @click.native="openFunctionTab('favorite')" />
+            </a-tooltip>
+          </div>
         </a-tabs>
       </a-layout-header>
       <a-layout-content>
         <div class="st-view-container">
-          <div class="st-view-tab" key="home">
-            <home />
-          </div>
-          <div class="st-view-tab" v-for="tab in tabList"
-            :key="tab.type + tab.id"
-            :style="{visibility: true}">
-            <full-text v-if="tab.type === 'fullText'" :tab="tab" />
-            <full-page v-else-if="tab.type === 'fullPage'" :tab="tab" />
-          </div>
+          <tab v-for="(tab, key) in tabList"
+            :key="key"
+            :tab="tab"
+            :activeTab="activeTab" />
         </div>
       </a-layout-content>
-      <!--<a-layout-footer style="text-align: center">
-        SYSU Tower Project / Made with ❤
-      </a-layout-footer>-->
     </a-layout>
   </div>
 </template>
 
 <script>
-import Home from '@/views/Home.vue';
-import FullText from '@/views/FullText.vue';
-import FullPage from '@/views/FullPage.vue';
+import Tab from '@/views/Tab.vue';
+import { mapState } from 'vuex';
 
 async function initializeData() {
-  const homeData = await this.$request.api('GET', '/home');
-  try {
-    const homeDataJSON = JSON.parse(homeData);
-    this.$store.commit('setNewsData', homeDataJSON);
-  } catch (err) {
-    // Do nothing
-    console.log(err);
-  }
+  const homeData = await this.$request.api('GET', '/home?limit=6');
+  this.$store.commit('setNewsData', homeData);
 }
 
 export default {
   components: {
-    Home,
-    FullText,
-    FullPage,
+    Tab,
+  },
+
+  data() {
+    return {
+      loading: false,
+    };
   },
 
   computed: {
@@ -79,6 +93,10 @@ export default {
         this.$store.commit('updateTabList', value);
       },
     },
+    ...mapState([
+      'tabTypes',
+      'tabListOrder',
+    ]),
   },
   methods: {
     onTabEdit(key, action) {
@@ -88,16 +106,42 @@ export default {
     },
     debug(type) {
       console.log(type);
-    }
+    },
+    async doRefresh() {
+      this.loading = true;
+      try {
+        const data = await this.$request.api('POST', '/refresh');
+        if (data === 'SUCCESS') {
+          this.$message.success('刷新订阅成功👏');
+        } else {
+          throw data;
+        }
+        initializeData.call(this);
+      } catch (e) {
+        this.$message.error(`发生了错误 QwQ：${e}`);
+      }
+      this.loading = false;
+    },
+
+    openFunctionTab(type) {
+      this.$store.commit('addTab', { type });
+    },
   },
 
   mounted() {
+    this.$store.commit('addTab', {
+      type: 'home',
+      id: 'home'
+    })
     initializeData.call(this);
   },
 };
 </script>
 
 <style lang="less">
+* {
+  -webkit-user-select: none;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -116,9 +160,21 @@ export default {
   }
 }
 
+.layout {
+  overflow: hidden;
+}
+
+.st-tab-text {
+  max-width: 200px;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: top; /* Why? */
+}
+
 .ant-layout-header {
   background: transparent;
-  padding: 0;
+  padding: 12px 24px 0 12px;
   height: auto;
 }
 
@@ -137,6 +193,10 @@ export default {
 .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
   border-color: #fff;
   background: #fff;
+}
+
+.st-tab-extra-btn {
+  margin: 0 2px;
 }
 
 .st-view-container {

@@ -23,6 +23,6 @@ export default new Router({
       path: '/page/:tabId',
       component: FullPage,
       props: true,
-    }
+    },
   ],
 });
