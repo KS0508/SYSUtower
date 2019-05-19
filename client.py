@@ -1,7 +1,6 @@
 # !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import json
-import spider
 import spiderqaq
 import time
 from flask import Flask
@@ -20,7 +19,7 @@ def home():
     if request.method == 'GET':
         article_num = request.args.get('limit', 5, type = int)
 
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c_source = data.cursor()
         c_news = data.cursor()
 
@@ -46,7 +45,7 @@ def home():
 @client.route('/sources/', methods = ['GET'])
 def source_all():
     if request.method == 'GET':
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c_src = data.cursor()
 
         src_list = []
@@ -64,7 +63,7 @@ def source_all():
 @client.route('/sources/count', methods = ['GET'])
 def src_count():
     if request.method == 'GET' :
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
 
         sources = c.execute('SELECT COUNT (source_id) FROM SOURCE')
@@ -79,7 +78,7 @@ def source_tar(id):
     if request.method == 'GET':
         article_num = request.args.get('limit', 10, type = int)
         article_page = request.args.get('page', 1, type = int)
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c_src = data.cursor()
         c_news = data.cursor()        
         src_list = {}        
@@ -104,7 +103,7 @@ def source_tar(id):
 @client.route('/news/<int:id>', methods = ['GET'])
 def give_news(id):
     if request.method == 'GET':
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
 
         att_list = []
@@ -127,7 +126,7 @@ def give_news(id):
 @client.route('/news_del/<int:news_id>', methods = ['DELETE'])
 def del_news(news_id):
     if request.method == 'DELETE':
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         news = c.execute('SELECT news_id FROM NEWS WHERE news_id = %d;' % news_id)
         for row_new in news:
@@ -150,7 +149,7 @@ def subscription():
         if fav_num != 0 :
             s_limit = 'LIMIT ? OFFSET ?', (fav_num, (fav_page - 1) * fav_num)
 
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c_src = data.cursor()
 
         sub = c_src.execute('SELECT source_id FROM SUBSCRIPTION ORDER BY source_id ASC %s;' % s_limit)
@@ -179,7 +178,7 @@ def subscription():
 @client.route('/subscriptions/count', methods = ['GET'])
 def sub_count():
     if request.method == 'GET' :
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         subscriptions = c.execute('SELECT COUNT (sub_id) FROM SUBSCRIPTION')
         for row_sub in subscriptions :
@@ -190,7 +189,7 @@ def sub_count():
 @client.route('/subscriptions/<int:src_id>', methods = ['POST'])
 def add_sub(src_id):
     if request.method == 'POST':
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         passport = 0
 
@@ -222,7 +221,7 @@ def add_sub(src_id):
 @client.route('/subscriptions/<int:id>', methods = ['DELETE'])
 def del_sub(id):
     if request.method == 'DELETE':
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         passport = 0
 
@@ -253,7 +252,7 @@ def del_sub(id):
 @client.route('/favorites/count', methods = ['GET'])
 def fav_count():
     if request.method == 'GET' :
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         favs = c.execute('SELECT COUNT (news_id) FROM NEWS WHERE is_bookmarked = 1')
         for row_fav in favs :
@@ -265,7 +264,7 @@ def fav_count():
 def fav_get():
     if request.method == 'GET' :
 
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         news_num = request.args.get('limit', 0, type = int)
         news_page = request.args.get('page', 1, type = int)
@@ -289,7 +288,7 @@ def fav_get():
 def add_fav(id):
     if request.method == 'POST':
         passport = 0
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         news_sub = c.execute('SELECT news_id, is_bookmarked FROM NEWS WHERE news_id = %d;' % id)
         for row_news_sub in news_sub :
@@ -318,7 +317,7 @@ def add_fav(id):
 def del_fav(id):
     if request.method == 'DELETE':
         passport = 0
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         news_sub = c.execute('SELECT news_id, is_bookmarked FROM NEWS WHERE news_id = %d;' % id)
         for row_news_sub in news_sub :
@@ -346,7 +345,7 @@ def del_fav(id):
 @client.route('/refresh', methods = ['POST'])
 def refresh():
     if request.method == 'POST' :
-        data = sqlite3.connect('test.db')
+        data = sqlite3.connect('basis.db')
         c = data.cursor()
         src_ids_list = []
         src_id = c.execute('SELECT source_id FROM SUBSCRIPTION ORDER BY source_id;')

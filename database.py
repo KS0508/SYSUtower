@@ -5,7 +5,7 @@ import Parser
 
 
 def search_news(title_url):
-    data = sqlite3.connect('test.db')
+    data = sqlite3.connect('basis.db')
     c = data.cursor()
     tar = c.execute('SELECT news_id FROM NEWS WHERE news_title = ? AND news_address = ?;', (title_url['news_title'], title_url['news_address']))
     for rw in tar :
@@ -14,7 +14,7 @@ def search_news(title_url):
     return 1
 
 def search_source(src_id):
-    data = sqlite3.connect('test.db')
+    data = sqlite3.connect('basis.db')
     c = data.cursor()
     address = c.execute('SELECT source_address FROM SOURCE WHERE source_id = %d;' % src_id)
     for row_add in address:
@@ -24,7 +24,7 @@ def search_source(src_id):
 
 def insert_news(news_info_list):
     print(len(news_info_list))
-    data = sqlite3.connect('test.db')
+    data = sqlite3.connect('basis.db')
     c = data.cursor()
     for news_info in news_info_list :
         abs_kw = Parser.parse(news_info['news_title'], news_info['news_abstract'])
