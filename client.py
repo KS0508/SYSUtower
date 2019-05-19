@@ -124,6 +124,23 @@ def give_news(id):
     else :
         return jsonify({'ret' : 1, 'data' : 'NULL'})
 
+@client.route('/news_del/<int:news_id>', methods = ['DELETE'])
+def del_news(news_id):
+    if request.method == 'DELETE':
+        data = sqlite3.connect('test.db')
+        c = data.cursor()
+        news = c.execute('SELECT news_id FROM NEWS WHERE news_id = %d;' % news_id)
+        for row_new in news:
+            c.execute('DELETE FROM NEWS WHERE news_id = %d' % news_id)
+            data.commit()
+            c.close()
+            data.close()
+            return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
+        return jsonify({'ret' : 222, 'data' : 'NEWS_NOT_FOUND'})
+    else :
+        return jsonify({'ret' : 1, 'data' : 'NULL'})
+   
+
 @client.route('/subscriptions/',  methods = ['GET'])
 def subscription():
     if request.method == 'GET' :
