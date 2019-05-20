@@ -7,6 +7,8 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 import sqlite3
+import socket
+import subprocess
 
 client = Flask(__name__)
 
@@ -360,3 +362,26 @@ def refresh():
         return     
     else :
         return jsonify({"ret": 456,  "data": "ALREADY_IN_PROGRESS"})
+
+@client.route('/quit', methods=['POST'])
+def quit():
+    shut = request.environ.get('werkzeug.server.shutdown')
+    if shut is None:
+        return 'Server is not running'
+    shut()
+    return '886'
+
+def get_free_port():
+    HOST = '127.0.0.1'
+    with socket.socket() as sock:
+        sock.bind((HOST, 0))
+        port = sock.getsockname()[1]
+    return port
+
+def main():
+    free_port = get_free_port()
+    client.run(host='127.0.0.1', port=free_port, threaded=True)
+    subprocess.run(['sysutower-frontend.exe', str(free_port)])
+
+if __name__ == "__main__":
+    main()

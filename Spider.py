@@ -77,6 +77,8 @@ class Spider():
 		soup=BeautifulSoup(res.text,'html.parser')
 		news_info['news_address']=URL
 		news_info['source_id']=source_id
+		news_info['news_title'] = ''
+		news_info['publish_date'] = ''
 		for header in soup.select('.page-header'):
 			news_info['news_title']=header.text.strip()
 		for writer in soup.select('.submitted-by'):
@@ -118,6 +120,8 @@ class Spider():
 		article1=[]
 		news_info['news_address']=URL
 		news_info['source_id']=source_id
+		news_info['news_title'] = ''
+		news_info['publish_date'] = ''
 		soup=BeautifulSoup(res.text,'html.parser')
 		for header in soup.select('.page-header'):
 			news_info['news_title']=header.text.strip()
@@ -138,7 +142,7 @@ class Spider():
 		articleall=' '.join(article)
 		news_info['news_abstract']=articleall
 		news_info['fetch_time']=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-		news_info['attachments']=self.catch_attachments1(URL)
+		news_info['attachments']=self.catch_attachment_list1(URL)
 		return news_info
 	def crawler(self):
 		while (self.linkQueue.getunvisitedURLcount() != 0):
@@ -148,13 +152,15 @@ class Spider():
 			visitedURL=database.search_source(visitedsource)
 			k=self.getNewsURL(visitedURL)
 			jiaowubu='http://jwb.sysu.edu.cn'
-			for URLL in k:
+			k.reverse()
+			table1=[]
+			for URLL in k :
 				if database.search_news(URLL):
-					table1={}
-					if jiaowubu in URLL:
+					if jiaowubu in URLL['news_address']:
 						news_info=self.catch_news_info1(URLL['news_address'],visitedsource)
 					else:	
 						news_info=self.catch_news_info(URLL['news_address'],visitedsource)
-					database.insert_news(news_info)
+					table1.append(news_info)
+			database.insert_news(table1)
 		return True
 
