@@ -84,7 +84,6 @@ export default {
     margin-top: 32px;
   }
   .st-ft-read-original {
-    display: block;
     margin-top: 36px;
   }
 </style>
