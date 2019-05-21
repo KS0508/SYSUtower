@@ -15,13 +15,15 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron';
+
 export default {
   props: [
     'tab',
   ],
   computed: {
     currentLocation() {
-      return this.$store.state.tabList[this.tab.id].data.url;
+      return this.$store.state.tabList[this.tab.id].data;
     },
   },
   methods: {
@@ -34,12 +36,12 @@ export default {
     },
     doDebug() {
       console.log('currentLocation', this.currentLocation);
-      console.log('$store', this.$store.state.tabList[this.tab.id].data.url);
+      console.log('$store', this.$store.state.tabList[this.tab.id].data);
     },
   },
 
   mounted() {
-    this.$refs.webviewEl.setAttribute('src', this.tab.data.url);
+    this.$refs.webviewEl.setAttribute('src', this.tab.data);
     this.$refs.webviewEl.addEventListener('page-title-updated', (event) => {
       this.$store.commit('updateTabTitle', { id: this.tab.id, title: event.title });
     });

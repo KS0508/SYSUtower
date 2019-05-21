@@ -18,7 +18,7 @@
     <template class="ant-card-actions" slot="actions">
       <news-item-action type="full" @click.native.stop="showFull"/>
       <news-item-action type="original" @click.native.stop="showOriginal"/>
-      <news-item-action 
+      <news-item-action
         :class="news.is_favorite ? 'st-news-action-bookmarked' : ''"
         :type="news.is_favorite ? 'bookmarked' : 'bookmark'"
         @click.native.stop="toggleBookmark"/>
@@ -40,47 +40,23 @@ export default {
       this.$store.commit('addTab', {
         name: this.news.title,
         type: 'fullText',
-        data: this.news,
+        data: this.news.id,
       });
     },
     showOriginal() {
       this.$store.commit('addTab', {
         name: this.news.title,
         type: 'fullPage',
-        data: {
-          url: this.news.url,
-        },
+        data: this.news.url,
       });
     },
     async toggleBookmark() {
       if (this.news.is_favorite) {
-        this.news.is_favorite = false;
-        try {
-          const ret = await this.$request.api('DELETE', `/favorites/${this.news.id}`)
-          if (ret === 'SUCCESS') {
-            this.$message.success('取消收藏成功👏');
-          } else {
-            throw ret;
-          }
-        } catch (err) {
-          this.$message.error(`操作出现错误：${err}`);
-          this.news.is_favorite = true;
-        }
+        this.$store.dispatch('favorite/deleteSingleFavorite', this.news.id);
       } else {
-        try {
-          this.news.is_favorite = true;
-          const ret = await this.$request.api('POST', `/favorites/${this.news.id}`)
-          if (ret === 'SUCCESS') {
-            this.$message.success('收藏成功👏');
-          } else {
-            throw ret;
-          }
-        } catch (err) {
-          this.$message.error(`操作出现错误：${err}`);
-          this.news.is_favorite = false;
-        }
+        this.$store.dispatch('favorite/addSingleFavorite', this.news.id);
       }
-    }
+    },
   },
 };
 </script>

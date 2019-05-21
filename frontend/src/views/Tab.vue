@@ -36,9 +36,9 @@ export default {
   ],
   computed: {
     ...mapState([
-      'mayObsolute'
-    ])
-  }
+      'mayObsolute',
+    ]),
+  },
 };
 </script>
 

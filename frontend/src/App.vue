@@ -17,13 +17,13 @@
           </a-tab-pane>
           <div slot="tabBarExtraContent">
             <a-tooltip title="首页">
-              <a-button 
-                class="st-tab-extra-btn" 
+              <a-button
+                class="st-tab-extra-btn"
                 shape="circle" size="small" icon="home"
                 @click.native="openFunctionTab('home')" />
             </a-tooltip>
             <a-tooltip title="刷新订阅" placement="bottom">
-              <a-button 
+              <a-button
                 class="st-tab-extra-btn"
                 shape="circle"
                 size="small"
@@ -41,6 +41,20 @@
                 shape="circle" size="small" icon="star"
                 @click.native="openFunctionTab('favorite')" />
             </a-tooltip>
+          <a-popover
+            placement="bottomRight">
+            <template slot="content">
+              <div class="st-auto-reload-panel" >
+                <a-switch
+                  v-model="isAutoReload"
+                />
+                每 30 分钟自动刷新
+              </div>
+              <div>上次抓取时间：{{ lastRefreshTime.format('YYYY-MM-DD HH:mm:ss') }}</div>
+            </template>
+              <a-button class="st-tab-extra-btn"
+                shape="circle" size="small" icon="clock-circle" />
+          </a-popover>
           </div>
         </a-tabs>
       </a-layout-header>
@@ -57,12 +71,19 @@
 </template>
 
 <script>
+import { remote } from 'electron';
+import { mapState, mapGetters } from 'vuex';
+
 import Tab from '@/views/Tab.vue';
-import { mapState } from 'vuex';
+
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 async function initializeData() {
-  const homeData = await this.$request.api('GET', '/home?limit=6');
-  this.$store.commit('setNewsData', homeData);
+  /* const homeData = await this.$request.api('GET', '/home?limit=6');
+  this.$store.commit('setNewsData', homeData); */
 }
 
 export default {
@@ -73,6 +94,7 @@ export default {
   data() {
     return {
       loading: false,
+      isAutoReload: true,
     };
   },
 
@@ -96,11 +118,17 @@ export default {
     ...mapState([
       'tabTypes',
       'tabListOrder',
+      'lastRefreshTime',
     ]),
   },
   methods: {
     onTabEdit(key, action) {
       if (action === 'remove') {
+        if (this.$store.getters.tabType(key) === 'fullText') {
+          // It's a full news & let's simplify it
+          console.log('simplify now!');
+          this.$store.commit('news/simplifySingleNews', this.$store.getters.tabData(key));
+        }
         this.$store.commit('removeTab', key);
       }
     },
@@ -109,6 +137,7 @@ export default {
     },
     async doRefresh() {
       this.loading = true;
+
       try {
         const data = await this.$request.api('POST', '/refresh');
         if (data === 'SUCCESS') {
@@ -116,7 +145,42 @@ export default {
         } else {
           throw data;
         }
-        initializeData.call(this);
+        await this.$store.dispatch('subscriptions/fetchHome');
+
+        // Find news
+        const new_news = this.$store.state.news.items.filter((news) => {
+          const isNew = dayjs(news.fetchTime, 'YYYY-MM-DD HH:mm:ss').isAfter(this.$store.state.lastRefreshTime);
+          return isNew;
+        });
+
+        if (new_news.length === 1) {
+          const singleNotification = new Notification(new_news[0].title, {
+            body: new_news[0].excerpt,
+          });
+          singleNotification.onclick = () => {
+            this.$store.commit('addTab', {
+              type: 'fullText',
+              name: new_news[0].title,
+              data: new_news[0].id,
+            });
+            remote.getCurrentWindow().show();
+            remote.getCurrentWindow().focus();
+          };
+        } else if (new_news.length > 1) {
+          const singleNotification = new Notification(`有 ${new_news.length} 条新的逸仙通知`, {
+            body: '点击此处查看',
+          });
+          singleNotification.onclick = () => {
+            this.$store.commit('addTab', {
+              type: 'home',
+            });
+            remote.getCurrentWindow().show();
+            remote.getCurrentWindow().focus();
+          };
+        }
+
+        new_news.forEach(news => console.log(news.title, this.$store.state.lastRefreshTime, news.fetchTime));
+        this.$store.commit('updateLastRefreshTime', dayjs());
       } catch (e) {
         this.$message.error(`发生了错误 QwQ：${e}`);
       }
@@ -126,14 +190,30 @@ export default {
     openFunctionTab(type) {
       this.$store.commit('addTab', { type });
     },
+    async doAutoRefresh() {
+      if (this.isAutoReload) {
+        await this.doRefresh();
+      }
+      setTimeout(this.doAutoRefresh, 1800000);
+    },
+
+    toggleAutoReload() {
+      this.isAutoReload = !this.isAutoReload;
+    },
   },
 
   mounted() {
     this.$store.commit('addTab', {
       type: 'home',
-      id: 'home'
-    })
-    initializeData.call(this);
+      id: 'home',
+    });
+    this.$message.info(remote.app.st_server_port);
+    /* initializeData.call(this); */
+    this.$store.dispatch('subscriptions/fetchHome');
+
+    setTimeout(() => {
+      this.doAutoRefresh.call(this);
+    }, 1800000);
   },
 };
 </script>
@@ -146,6 +226,7 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f2f5;
   color: #2c3e50;
   height: 100%;
 }
@@ -197,6 +278,9 @@ export default {
 
 .st-tab-extra-btn {
   margin: 0 2px;
+}
+.st-auto-reload-panel {
+  margin-bottom: 8px;
 }
 
 .st-view-container {

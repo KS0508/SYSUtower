@@ -1,11 +1,23 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import dayjs from 'dayjs';
+import favorite from './stores/favorite';
+import news from './stores/news';
+import subscriptions from './stores/subscriptions';
+
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules: {
+    favorite,
+    news,
+    subscriptions,
+  },
+
   state: {
-    newsData: [],
+    lastRefreshTime: dayjs(),
 
     tabTypes: {
       home: {
@@ -79,12 +91,16 @@ export default new Vuex.Store({
     },
 
     mayObsolute: {
-      'home': false,
-      'addSubscription': false,
-      'favorite': false,
+      home: false,
+      addSubscription: false,
+      favorite: false,
     },
 
     tabIncrement: 0,
+  },
+  getters: {
+    tabType: state => tabKey => state.tabList[tabKey].type,
+    tabData: state => tabKey => state.tabList[tabKey].data,
   },
   mutations: {
     setNewsData(state, data) {
@@ -100,7 +116,7 @@ export default new Vuex.Store({
         existTab = tabArray.find(obj => obj[1].type === tab.type);
       } else {
         existTab = tabArray.find(obj => (obj[1].type === tab.type)
-          && (obj[1].data[currentTabType.singleDataField] === tab.data[currentTabType.singleDataField]));
+          && (obj[1].data === tab.data));
       }
 
       state.lastActiveTab = state.activeTab;
@@ -141,8 +157,11 @@ export default new Vuex.Store({
       console.log(id, title);
     },
     updateTabURL(state, { id, url }) {
-      Vue.set(state.tabList[id].data, 'url', url);
+      Vue.set(state.tabList[id], 'data', url);
       console.log(id, url);
+    },
+    updateLastRefreshTime(state, time) {
+      Vue.set(state, 'lastRefreshTime', time);
     },
   },
   actions: {

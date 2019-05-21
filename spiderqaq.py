@@ -81,7 +81,7 @@ class Spider():
 		attachments=[]
 		attachments1={}
 		soup=BeautifulSoup(res.text,'html.parser')
-		for file in soup.find_all(href=re.compile(r"(.pdf$|.doc$|.xls$)")):
+		for file in soup.find_all(href=re.compile(r"(.pdf$|.doc$|.xls$|.xlsx$|.docx$)")):
 			attachments1={}
 			attachments1['att_name']=file.text
 			attachments1['att_address']=file['href']
@@ -175,6 +175,16 @@ class Spider():
 			attachments1['att_address']=file['href']
 			attachments.append(attachments1)
 		for file in soup.find_all(href=re.compile(r".xls")):
+			attachments1={}
+			attachments1['att_name']=file.text
+			attachments1['att_address']=file['href']
+			attachments.append(attachments1)
+		for file in soup.find_all(href=re.compile(r".xlsx")):
+			attachments1={}
+			attachments1['att_name']=file.text
+			attachments1['att_address']=file['href']
+			attachments.append(attachments1)
+		for file in soup.find_all(href=re.compile(r".docx")):
 			attachments1={}
 			attachments1['att_name']=file.text
 			attachments1['att_address']=file['href']

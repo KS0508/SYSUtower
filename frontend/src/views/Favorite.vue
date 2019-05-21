@@ -5,17 +5,17 @@
       :dataSource="favorite"
       itemLayout="horizontal"
       :locale="{emptyText: '好像没有收藏了的新闻'}">
-      <a-list-item slot="renderItem" slot-scope="news, index" key="news.id">
+      <a-list-item slot="renderItem" slot-scope="news" key="news.id">
         <a-popconfirm
           slot="actions"
           title="确定要取消收藏这条新闻么？"
           placement="left"
-          @confirm="deleteFavorite(index)"
+          @confirm="$store.dispatch('favorite/deleteSingleFavorite', news.id)"
           okText="是的" cancelText="不了">
           <a>取消收藏</a>
         </a-popconfirm>
         <a-list-item-meta>
-          <a slot="title" @click="openNews(index)">{{ news.title }}</a>
+          <a slot="title" @click="openNews(news)">{{ news.title }}</a>
         </a-list-item-meta>
         {{ news.publishDate }}
       </a-list-item>
@@ -33,17 +33,17 @@ export default {
   props: [
     'tab',
   ],
-  data() {
-    return {
-      favorite: [],
-    };
+  computed: {
+    favorite() {
+      return this.$store.getters['favorite/items'];
+    },
   },
   methods: {
-    openNews(index) {
+    openNews(news) {
       this.$store.commit('addTab', {
         type: 'fullText',
-        name: this.favorite[index].title,
-        data: this.favorite[index],
+        name: news.title,
+        data: news.id,
       });
     },
     async deleteFavorite(index) {
@@ -57,7 +57,7 @@ export default {
     },
   },
   mounted() {
-    initializeFavorite.call(this);
+    this.$store.dispatch('favorite/fetchFavorite');
   },
 };
 </script>

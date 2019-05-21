@@ -29,12 +29,12 @@ def home():
         src_list = []        
         
         for row_src in sources:
-            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE source_id = %d ORDER BY news_id DESC LIMIT %d;' % (row_src[0], article_num))
+            news = c_news.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address, source_id FROM NEWS WHERE source_id = %d ORDER BY news_id DESC LIMIT %d;' % (row_src[0], article_num))
             news_list = []
 
             for row_new in news:
-                news_list.append({'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
-            src_list.append({'id' : row_src[0], 'name' : row_src[2], 'department' : row_src[1], 'news' : news_list})
+                news_list.append({'sourceID': row_new[8], 'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
+            src_list.append({'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list})
         
         c_source.close()
         c_news.close()
@@ -91,7 +91,7 @@ def source_tar(id):
             news_list = []
 
             for row_new in news:
-                news_list.append({'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
+                news_list.append({'sourceID': id,'id' : row_new[0], 'title' : row_new[1], 'publishDate' : row_new[2], 'fetchTime' : row_new[3], 'is_favorite' : row_new[4], 'keywords' : row_new[5].split('，'), 'excerpt' : row_new[6], 'url' : row_new[7]})
             src_list = {'id' : row_src[0], 'name' : row_src[1], 'department' : row_src[2], 'news' : news_list}
     
         c_src.close()
@@ -114,9 +114,9 @@ def give_news(id):
             att_list.append({'id' : rows_att[0], 'name' : rows_att[1], 'url' : rows_att[2]})
         
         news_tar = {}
-        news = c.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_text, news_address FROM NEWS WHERE news_id = %d;' % id)
+        news = c.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_text, news_address, source_id FROM NEWS WHERE news_id = %d;' % id)
         for rows_new in news:
-            news_tar = {'id' : rows_new[0], 'title' : rows_new[1], 'publishDate' : rows_new[2], 'fetchTime' : rows_new[3], 'is_favorite' : rows_new[4], 'keywords' : rows_new[5].split('，'), 'excerpt' : rows_new[6], 'content' : rows_new[7], 'url' : rows_new[8], 'attachments' : att_list}
+            news_tar = {'sourceID': rows_new[9],'id' : rows_new[0], 'title' : rows_new[1], 'publishDate' : rows_new[2], 'fetchTime' : rows_new[3], 'is_favorite' : rows_new[4], 'keywords' : rows_new[5].split('，'), 'excerpt' : rows_new[6], 'content' : rows_new[7], 'url' : rows_new[8], 'attachments' : att_list}
         
         c.close()
         data.close()
@@ -274,10 +274,10 @@ def fav_get():
         if news_num :
             s_limit = 'LIMIT ? OFFSET ?', (news_num, (news_page - 1) * news_num)
         
-        favorite = c.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address FROM NEWS WHERE is_bookmarked = 1 ORDER BY fetch_time %s;' % s_limit)
+        favorite = c.execute('SELECT news_id, news_title, publish_date, fetch_time, is_bookmarked, news_keyword, news_abstract, news_address, source_id FROM NEWS WHERE is_bookmarked = 1 ORDER BY fetch_time %s;' % s_limit)
         fav_list = []
         for row_fav in favorite :
-            fav_list.append({'id' : row_fav[0], 'title' : row_fav[1], 'publishDate' : row_fav[2], 'fetch_time' : row_fav[3], 'is_favorite' : row_fav[4], 'keywords' : row_fav[5].split('，'), 'excerpt' : row_fav[6], 'url' : row_fav[7]})
+            fav_list.append({'sourceID': row_fav[8], 'id' : row_fav[0], 'title' : row_fav[1], 'publishDate' : row_fav[2], 'fetch_time' : row_fav[3], 'is_favorite' : row_fav[4], 'keywords' : row_fav[5].split('，'), 'excerpt' : row_fav[6], 'url' : row_fav[7]})
         
         c.close()
         data.close()
@@ -380,8 +380,9 @@ def get_free_port():
 
 def main():
     free_port = get_free_port()
+    subprocess.Popen(['./frontend/dist_electron/win-unpacked/sysutower-frontend.exe', str(free_port)])
+    # subprocess.run(['sysutower-frontend.exe', str(free_port)])
     client.run(host='127.0.0.1', port=free_port, threaded=True)
-    subprocess.run(['sysutower-frontend.exe', str(free_port)])
 
 if __name__ == "__main__":
     main()

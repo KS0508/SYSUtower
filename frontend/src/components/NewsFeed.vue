@@ -11,7 +11,7 @@
     <a-list
       :grid="homeGrid"
       :dataSource="newsList"
-      :locale="{emptyText: '还没有新闻'}"
+      :locale="{emptyText: '刚刚添加的订阅需要手动刷新才能获取到新闻 👌'}"
     >
       <a-list-item slot="renderItem" slot-scope="news" :key="news.id">
         <news-item :news="news" />
@@ -42,7 +42,7 @@ export default {
       this.$store.commit('addTab', {
         type: 'sourceBrowser',
         name: `${this.category.name} - ${this.category.department}`,
-        data: this.category,
+        data: this.category.id,
       });
     },
   },

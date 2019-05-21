@@ -23,7 +23,7 @@ class linkQueue:
 		return self.visited.append(URL)
 	def addunvisitedURL(self,URL):
 		return self.unvisited.append(URL)
-	def removevisitedURL(self):
+	def removevisitedURL(self,URL):
 		return self.visited.remove(URL)
 	def unvisitedURLdequence(self):
 		try:

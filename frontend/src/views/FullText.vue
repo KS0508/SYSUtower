@@ -19,18 +19,20 @@
           :dataSource="news.attachments"
           itemLayout="horizontal">
           <a-list-item slot="renderItem" slot-scope="attachment" key="attachment.id">
-            <a :href="attachment.url">{{ attachment.name }}</a>
+            <a :href="attachment.url" @click="prepareDownload(attachment)">{{ attachment.name }}</a>
           </a-list-item>
         </a-list>
       </div>
       <a class="st-ft-read-original" @click="openOriginal">阅读原文</a>
-      <a-divider type="vertical" />
-      <a class="st-ft-delete-news" @click="deleteNews">删除新闻</a>
+      <!-- <a-divider type="vertical" />
+      <a class="st-ft-delete-news" @click="deleteNews">删除新闻</a> -->
     </div>
   </div>
 </template>
 
 <script>
+import { ipcRenderer } from 'electron';
+
 async function initializeNews() {
   const newsData = await this.$request.api('GET', `/news/${this.news.id}`);
   this.news = newsData;
@@ -40,32 +42,32 @@ export default {
   props: [
     'tab',
   ],
-  data() {
-    return {
-      news: {
-        ...this.tab.data,
-        content: '',
-        attachments: [],
-      },
-    };
+  computed: {
+    news() {
+      return this.$store.getters['news/items'].find(item => item.id === this.tab.data);
+    },
   },
   methods: {
     openOriginal() {
       this.$store.commit('addTab', {
         type: 'fullPage',
         name: this.news.title,
-        data: {
-          url: this.news.url,
-        },
+        data: this.news.url,
       });
     },
     async deleteNews() {
       const ret = this.$request.api('DELETE', `/news_del/${this.news.id}`);
       this.$message.info(ret);
-    }
+    },
+    prepareDownload(attachment) {
+      ipcRenderer.sendSync('prepareDownload', {
+        url: attachment.url,
+        name: attachment.name,
+      });
+    },
   },
   mounted() {
-    initializeNews.call(this);
+    this.$store.dispatch('news/fetchSingleNews', this.tab.data);
   },
 };
 </script>
@@ -84,6 +86,7 @@ export default {
     margin-top: 32px;
   }
   .st-ft-read-original {
+    display: inline-block;
     margin-top: 36px;
   }
 </style>

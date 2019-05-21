@@ -6,9 +6,9 @@
       :dataSource="source.news"
       itemLayout="horizontal"
       :locale="{emptyText: '还没有新闻'}">
-      <a-list-item slot="renderItem" slot-scope="news, index" key="news.id">
+      <a-list-item slot="renderItem" slot-scope="news" key="news.id">
         <a-list-item-meta>
-          <a slot="title" @click="openNews(index)">{{ news.title }}</a>
+          <a slot="title" @click="openNews(news)">{{ news.title }}</a>
         </a-list-item-meta>
         {{ news.publishDate }}
       </a-list-item>
@@ -27,24 +27,22 @@ export default {
   props: [
     'tab',
   ],
-  data() {
-    return {
-      source: {
-        ...this.tab.data,
-      },
-    };
+  computed: {
+    source() {
+      return this.$store.getters['subscriptions/items'].find(sub => sub.id === this.tab.data);
+    },
   },
   methods: {
-    openNews(index) {
+    openNews(news) {
       this.$store.commit('addTab', {
         type: 'fullText',
-        name: this.source.news[index].title,
-        data: this.source.news[index],
+        name: news.title,
+        data: news.id,
       });
     },
   },
   mounted() {
-    initializeSource.call(this);
+    this.$store.dispatch('subscriptions/fetchSubscriptionNews', this.tab.data);
   },
 };
 </script>

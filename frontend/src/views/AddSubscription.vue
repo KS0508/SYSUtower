@@ -6,14 +6,14 @@
     <a-list
       :grid="subscriptionGrid"
       :dataSource="subOnSource"
-      :locale="{emptyText: '没有可用的新闻源 so sad'}">
+      :locale="{emptyText: '正在加载可供订阅的新闻源 ...'}">
       <a-list-item slot="renderItem" slot-scope="source" key="source.id">
         <a-card
           :title="source.department"
           :hoverable="true"
           :class="{'st-card-subscribed': source.isSubscribed}"
           @click.native="toggleSubscription(source)">
-          <a-icon 
+          <a-icon
             :type="source.isSubscribed ? 'check' : 'plus-circle'"
             :style="{fontSize: '150%', verticalAlign: 'middle'}"
             slot="extra"></a-icon>
@@ -41,19 +41,17 @@ export default {
   data() {
     return {
       source: [],
-      subscription: [],
     };
   },
   computed: {
+    subscription() {
+      return this.$store.state.subscriptions.items;
+    },
     subOnSource() {
-      return this.source.map(src => {
-        return {
-          ...src,
-          isSubscribed: !!this.subscription.find(sub => {
-            return sub.id === src.id;
-          })
-        };
-      });
+      return this.source.map(src => ({
+        ...src,
+        isSubscribed: !!this.subscription.find(sub => sub.id === src.id),
+      }));
     },
     ...mapState([
       'subscriptionGrid',
@@ -62,7 +60,7 @@ export default {
   methods: {
     async addSubscription(source) {
       this.subscription.push({
-        id: source.id
+        id: source.id,
       });
       const ret = await this.$request.api('POST', `/subscriptions/${source.id}`);
       if (ret === 'SUCCESS') {
@@ -84,15 +82,15 @@ export default {
     },
     toggleSubscription(source) {
       if (source.isSubscribed) {
-        this.deleteSubscription(source);
+        this.$store.dispatch('subscriptions/deleteSingleSubscription', source);
       } else {
-        this.addSubscription(source);
+        this.$store.dispatch('subscriptions/addSingleSubscription', source);
       }
     },
   },
   mounted() {
+    this.$store.dispatch('subscriptions/fetchSubscription');
     initializeSource.call(this);
-    initializeSubscription.call(this);
   },
 };
 </script>
