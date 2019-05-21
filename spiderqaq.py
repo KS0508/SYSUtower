@@ -39,9 +39,10 @@ class linkQueue:
 	def unvisitedURLisempty(self):
 		return len(self.unvisited) == 0
 class Spider():
-	def __init__(self,source_list,cutting_model):
+	def __init__(self,source_list,cutting_model,model_name):
 		self.linkQueue = linkQueue()
 		self.cutting_model = cutting_model
+		self.model_name = model_name
 		for source_id in source_list:
 			self.linkQueue.addunvisitedURL(source_id)
 	def getNewsURL(self, URL):
@@ -243,6 +244,6 @@ class Spider():
 					else:	
 						news_info=self.catch_news_info(URLL['news_address'],URLL['news_title'],visitedsource)
 					table1.append(news_info)
-			database.insert_news(table1, self.cutting_model)
+			database.insert_news(table1, self.cutting_model, self.model_name)
 		return True
 

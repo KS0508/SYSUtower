@@ -21,12 +21,12 @@ def search_source(src_id):
     return 0
 
 
-def insert_news(news_info_list, cutting_model):
+def insert_news(news_info_list, cutting_model, model_name):
     print(len(news_info_list))
     data = sqlite3.connect('basis.db')
     c = data.cursor()
     for news_info in news_info_list :
-        abs_kw = parserqwq.parse(news_info['news_title'], news_info['news_abstract'], cutting_model)
+        abs_kw = parserqwq.parse(news_info['news_title'], news_info['news_abstract'], cutting_model, model_name)
         c.execute('INSERT INTO NEWS (source_id, news_title, news_text, publish_date, fetch_time, is_bookmarked, news_abstract, news_address, news_keyword) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);', (news_info['source_id'], news_info['news_title'], news_info['news_text'], news_info['publish_date'], news_info['fetch_time'], 0, abs_kw[0], news_info['news_address'], abs_kw[1]))
         
         news_id = 0

@@ -25,20 +25,16 @@ def calc_similarity(wordlist_1, wordlist_2):
     similarity = common_occur_sum / denominator
     return similarity
 
-def find_abstract(sentences, cutting_model, limit=3, alpha=0.85):
+def find_abstract(sentences, cutting_model, model_name, limit=3, alpha=0.85):
     abstract_sentences = []
     sentences_num = len(sentences)
     graph = zeros((sentences_num, sentences_num))
     wordlist = []
     for sent in sentences:
-        '''
-        THU model
-        current_sentence_wordcut = cutting_model.cut(sent, text=True)
-        '''
-        '''
-        PKU model
-        current_sentence_wordcut = cutting_model.cut(sent)
-        '''
+        if model_name == 'THU':
+            current_sentence_wordcut = cutting_model.cut(sent, text=True)
+        elif model_name == 'PKU'
+            current_sentence_wordcut = cutting_model.cut(sent)
         current_sentence_wordcut = cutting_model.cut(sent, text=True)
         wordlist.append(current_sentence_wordcut)
     for x in range(sentences_num):

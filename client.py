@@ -348,8 +348,8 @@ def del_fav(id):
 
 @client.route('/refresh', methods = ['POST'])
 def refresh():
-    lac = thulac.thulac(seg_only=True)
-    #seg = pkuseg.pkuseg()
+    #model = thulac.thulac(model_path='./THUmodel', seg_only=True)
+    model = pkuseg.pkuseg(model_name='./PKUmodel')
     if request.method == 'POST' :
         data = sqlite3.connect('basis.db')
         c = data.cursor()
@@ -359,7 +359,7 @@ def refresh():
             src_ids_list.append(row_id[0])
         c.close()
         data.close()
-        test = spiderqaq.Spider(src_ids_list, lac)
+        test = spiderqaq.Spider(src_ids_list, model, model_name='PKU')
         if test.crawler() :
             return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
 
