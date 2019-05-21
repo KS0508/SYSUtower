@@ -380,8 +380,6 @@ def get_free_port():
 
 def main():
     free_port = get_free_port()
-    subprocess.Popen(['./frontend/dist_electron/win-unpacked/sysutower-frontend.exe', str(free_port)])
-    # subprocess.run(['sysutower-frontend.exe', str(free_port)])
     client.run(host='127.0.0.1', port=free_port, threaded=True)
 
 if __name__ == "__main__":

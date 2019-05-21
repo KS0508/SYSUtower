@@ -1,21 +1,23 @@
 <template>
   <section class="st-view-home">
-    <div v-if="loading">
-      <a-skeleton active :title="false"/>
-    </div>
-    <div v-else-if="newsData.length">
-      <news-feed v-for="category in newsData" :count="itemsCount" :key="category.id" :category="category" />
+    <div v-if="loadingStatus !== 'done'">
+      <a-skeleton :paragraph="{rows: 10}"/>
     </div>
     <div v-else>
-      <p>欢迎使用 SYSU Tower 逸仙塔。<br>
-      看起来您还没有订阅任何一个新闻源。点击下面的添加订阅按钮，开始体验吧！</p>
-    </div>
-    <a-button
-      block
-      type="primary"
-      size="large"
-      icon="plus"
-      @click.native="openAddSubscription">添加订阅</a-button>
+      <div v-if="newsData.length">
+        <news-feed v-for="category in newsData" :count="itemsCount" :key="category.id" :category="category" />
+      </div>
+      <div v-else>
+        <p>欢迎使用 SYSU Tower 逸仙塔。<br>
+        看起来您还没有订阅任何一个新闻源。点击下面的添加订阅按钮，开始体验吧！</p>
+      </div>
+      <a-button
+        block
+        type="primary"
+        size="large"
+        icon="plus"
+        @click.native="openAddSubscription">添加订阅</a-button>
+      </div>
   </section>
 </template>
 
@@ -53,6 +55,9 @@ export default {
       }
       return 3;
     },
+    ...mapState([
+      'loadingStatus',
+    ]),
     ...mapGetters({
       newsData: 'subscriptions/items',
     }),

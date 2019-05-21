@@ -1,13 +1,13 @@
 const { net, app } = require('electron').remote; // eslint-disable-line import/no-extraneous-dependencies
 
 const ST_HOST = 'localhost';
-const ST_PORT = 11069;
-// const ST_PORT = app.st_server_port;
-// const ST_HOST = 'localhost';
-// const ST_PORT = '8000';
+let ST_PORT = 0;
 
 export default function install(Vue) {
   Vue.prototype.$request = { // eslint-disable-line no-param-reassign
+    init (port) {
+      ST_PORT = port;
+    },
     async api(method, url) {
       return new Promise((resolve, reject) => {
         const request = net.request({

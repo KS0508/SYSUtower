@@ -1,77 +1,79 @@
 <template>
   <div id="app">
-    <a-layout class="layout" style="height: 100%;">
-      <a-layout-header>
-        <a-tabs
-          v-model="activeTab"
-          type="editable-card"
-          :tabBarGutter="6"
-          :hideAdd="true"
-          @edit="onTabEdit">
-          <a-tab-pane v-for="tabPos in tabListOrder"
-            :key="tabPos"
-            :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
-            <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name">
-              <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
-            </span>
-          </a-tab-pane>
-          <div slot="tabBarExtraContent">
-            <a-tooltip title="首页">
-              <a-button
-                class="st-tab-extra-btn"
-                shape="circle" size="small" icon="home"
-                @click.native="openFunctionTab('home')" />
-            </a-tooltip>
-            <a-tooltip title="刷新订阅" placement="bottom">
-              <a-button
-                class="st-tab-extra-btn"
-                shape="circle"
-                size="small"
-                :icon="loading ? 'loading': 'reload'"
-                :disabled="loading ? true : false"
-                @click.native="doRefresh" />
-            </a-tooltip>
-            <a-tooltip title="我的订阅">
-              <a-button class="st-tab-extra-btn"
-                shape="circle" size="small" icon="user"
-                @click.native="openFunctionTab('addSubscription')" />
-            </a-tooltip>
-            <a-tooltip title="收藏夹">
-              <a-button class="st-tab-extra-btn"
-                shape="circle" size="small" icon="star"
-                @click.native="openFunctionTab('favorite')" />
-            </a-tooltip>
-          <a-popover
-            placement="bottomRight">
-            <template slot="content">
-              <div class="st-auto-reload-panel" >
-                <a-switch
-                  v-model="isAutoReload"
-                />
-                每 30 分钟自动刷新
-              </div>
-              <div>上次抓取时间：{{ lastRefreshTime.format('YYYY-MM-DD HH:mm:ss') }}</div>
-            </template>
-              <a-button class="st-tab-extra-btn"
-                shape="circle" size="small" icon="clock-circle" />
-          </a-popover>
+    <a-spin :spinning="loadingStatus !== 'done'" :tip="loadingStatusDesc[loadingStatus]">
+      <a-layout class="layout" style="height: 100%;">
+        <a-layout-header>
+          <a-tabs
+            v-model="activeTab"
+            type="editable-card"
+            :tabBarGutter="6"
+            :hideAdd="true"
+            @edit="onTabEdit">
+            <a-tab-pane v-for="tabPos in tabListOrder"
+              :key="tabPos"
+              :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
+              <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name">
+                <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
+              </span>
+            </a-tab-pane>
+            <div slot="tabBarExtraContent">
+              <a-tooltip title="首页">
+                <a-button
+                  class="st-tab-extra-btn"
+                  shape="circle" size="small" icon="home"
+                  @click.native="openFunctionTab('home')" />
+              </a-tooltip>
+              <a-tooltip title="刷新订阅" placement="bottom">
+                <a-button
+                  class="st-tab-extra-btn"
+                  shape="circle"
+                  size="small"
+                  :icon="loading ? 'loading': 'reload'"
+                  :disabled="loading ? true : false"
+                  @click.native="doRefresh" />
+              </a-tooltip>
+              <a-tooltip title="我的订阅">
+                <a-button class="st-tab-extra-btn"
+                  shape="circle" size="small" icon="user"
+                  @click.native="openFunctionTab('addSubscription')" />
+              </a-tooltip>
+              <a-tooltip title="收藏夹">
+                <a-button class="st-tab-extra-btn"
+                  shape="circle" size="small" icon="star"
+                  @click.native="openFunctionTab('favorite')" />
+              </a-tooltip>
+            <a-popover
+              placement="bottomRight">
+              <template slot="content">
+                <div class="st-auto-reload-panel" >
+                  <a-switch
+                    v-model="isAutoReload"
+                  />
+                  每 30 分钟自动刷新
+                </div>
+                <div>上次抓取时间：{{ lastRefreshTime.format('YYYY-MM-DD HH:mm:ss') }}</div>
+              </template>
+                <a-button class="st-tab-extra-btn"
+                  shape="circle" size="small" icon="clock-circle" />
+            </a-popover>
+            </div>
+          </a-tabs>
+        </a-layout-header>
+        <a-layout-content>
+          <div class="st-view-container">
+            <tab v-for="(tab, key) in tabList"
+              :key="key"
+              :tab="tab"
+              :activeTab="activeTab" />
           </div>
-        </a-tabs>
-      </a-layout-header>
-      <a-layout-content>
-        <div class="st-view-container">
-          <tab v-for="(tab, key) in tabList"
-            :key="key"
-            :tab="tab"
-            :activeTab="activeTab" />
-        </div>
-      </a-layout-content>
-    </a-layout>
+        </a-layout-content>
+      </a-layout>
+    </a-spin>
   </div>
 </template>
 
 <script>
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import { mapState, mapGetters } from 'vuex';
 
 import Tab from '@/views/Tab.vue';
@@ -119,6 +121,8 @@ export default {
       'tabTypes',
       'tabListOrder',
       'lastRefreshTime',
+      'loadingStatus',
+      'loadingStatusDesc',
     ]),
   },
   methods: {
@@ -207,13 +211,19 @@ export default {
       type: 'home',
       id: 'home',
     });
-    this.$message.info(remote.app.st_server_port);
-    /* initializeData.call(this); */
-    this.$store.dispatch('subscriptions/fetchHome');
 
-    setTimeout(() => {
-      this.doAutoRefresh.call(this);
-    }, 1800000);
+    // Starting backend
+    ipcRenderer.on('startedBackendServer', async (event, port) => {
+      this.$request.init(port);
+      this.$store.commit('updateLoadingStatus', 'firstRefresh');
+      await this.doRefresh();
+      this.$store.commit('updateLoadingStatus', 'done');
+
+      setTimeout(() => {
+        this.doAutoRefresh.call(this);
+      }, 1800000);
+    })
+    ipcRenderer.send('startBackendServer');
   },
 };
 </script>
@@ -243,6 +253,13 @@ export default {
 
 .layout {
   overflow: hidden;
+}
+
+.ant-spin-nested-loading, .ant-spin-nested-loading > .ant-spin-container {
+  height: 100%;
+}
+.ant-spin-nested-loading > div > .ant-spin {
+  max-height: 100%; 
 }
 
 .st-tab-text {

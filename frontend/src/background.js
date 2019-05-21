@@ -6,11 +6,9 @@ import {
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
 import path from 'path';
+import child_process from 'child_process';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-// Getting port
-app.st_server_port = process.argv[1] !== 'dist_electron' ? process.argv[1] : 10664;
 
 app.setAppUserModelId(process.execPath);
 
@@ -18,6 +16,7 @@ app.setAppUserModelId(process.execPath);
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let tray;
+let backendPs;
 let isQuitting = false;
 let prepareDownloadInfo = {};
 
@@ -53,21 +52,25 @@ function createWindow() {
   }
 
   win.on('close', (event) => {
-    if (!isQuitting) {
+    const userChoice = dialog.showMessageBox({
+      type: 'none',
+      message: '请问是要关闭程序还是最小化到托盘呢？',
+      detail: '（最小化到托盘可以继续接收新消息提醒）',
+      title: 'SYSU Tower',
+      icon: path.join(__static, 'icon.ico'),
+      buttons: ['最小化到托盘', '关闭程序', 'Cancel'],
+      cancelId: 2,
+    });
+    if (userChoice === 0) {
       event.preventDefault();
-      win.minimize();
+      win.hide();
+    } else if (userChoice === 2) {
+      event.preventDefault();
     }
-
-    event.returnValue = false;
   });
 
   win.on('closed', () => {
     win = null;
-  });
-
-  win.on('minimize', (event) => {
-    event.preventDefault();
-    win.hide();
   });
 
   win.webContents.session.on('will-download', (event, item, webContents) => {
@@ -89,17 +92,10 @@ function createWindow() {
   });
 }
 
-app.on('before-quit', () => {
+app.on('before-quit', (event) => {
   isQuitting = true;
-  if (!isDevelopment) {
-    net.request({
-      method: 'POST',
-      protocol: 'http:',
-      hostname: 'localhost',
-      port: app.st_server_port,
-      path: '/quit',
-    })
-      .end();
+  if (tray && !tray.isDestroyed()) {
+    tray.destroy();
   }
 });
 
@@ -133,12 +129,40 @@ app.on('ready', async () => {
     }
   }
 
+  ipcMain.once('startBackendServer', async (event) => {
+    let backendStdOut = '';
+
+    backendPs = child_process.spawn(isDevelopment ? 
+      path.join(__static, '../../dist/SYSU_Tower/SYSU_Tower_Server.exe') :
+      path.join(process.execPath, '../SYSU_Tower_Server.exe'), {
+        cwd: isDevelopment ? 
+          path.join(__static, '../../dist/SYSU_Tower/') : 
+          path.join(process.execPath, '../'),
+      });
+    
+    function monitorStdOut(data) {
+      backendStdOut += data;
+      const stdOutMatch = backendStdOut.match(/Running on http:\/\/127.0.0.1:(\d+?)\//);
+      if (stdOutMatch && stdOutMatch[1]) {
+        event.reply('startedBackendServer', stdOutMatch[1]);
+        backendPs.stderr.off('data', monitorStdOut);
+        backendPs.stderr.on('data', str => console.log(str.toString()));
+      }
+    }
+
+    backendPs.stderr.on('data', monitorStdOut);
+    app.on('before-quit', () => {
+      backendPs.kill();
+    });
+  })
+
   ipcMain.on('prepareDownload', (event, download) => {
     prepareDownloadInfo = download;
     event.returnValue = true;
   });
 
   createWindow();
+
   tray = new Tray(path.join(__static, 'icon.ico'));
   tray.setContextMenu(Menu.buildFromTemplate([
     {

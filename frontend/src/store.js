@@ -17,6 +17,13 @@ export default new Vuex.Store({
   },
 
   state: {
+    loadingStatus: 'startingBackend',
+    loadingStatusDesc: {
+      startingBackend: '正在启动后台...',
+      firstRefresh: '正在获取数据...',
+      done: '完成!',
+    },
+
     lastRefreshTime: dayjs(),
 
     tabTypes: {
@@ -162,6 +169,9 @@ export default new Vuex.Store({
     },
     updateLastRefreshTime(state, time) {
       Vue.set(state, 'lastRefreshTime', time);
+    },
+    updateLoadingStatus(state, status) {
+      state.loadingStatus = status;
     },
   },
   actions: {
