@@ -12,6 +12,7 @@ import aiohttp
 import asyncio
 import urllib3
 import operator
+
 class linkQueue:
 	def __init__(self):
 		self.visited = []
@@ -38,8 +39,9 @@ class linkQueue:
 	def unvisitedURLisempty(self):
 		return len(self.unvisited) == 0
 class Spider():
-	def __init__(self,source_list):
+	def __init__(self,source_list,cutting_model):
 		self.linkQueue = linkQueue()
+		self.cutting_model = cutting_model
 		for source_id in source_list:
 			self.linkQueue.addunvisitedURL(source_id)
 	def getNewsURL(self, URL):
@@ -241,6 +243,6 @@ class Spider():
 					else:	
 						news_info=self.catch_news_info(URLL['news_address'],URLL['news_title'],visitedsource)
 					table1.append(news_info)
-			database.insert_news(table1)
+			database.insert_news(table1, self.cutting_model)
 		return True
 

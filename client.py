@@ -9,6 +9,8 @@ from flask import jsonify
 import sqlite3
 import socket
 import subprocess
+import thulac
+import pkuseg
 
 client = Flask(__name__)
 
@@ -346,6 +348,8 @@ def del_fav(id):
 
 @client.route('/refresh', methods = ['POST'])
 def refresh():
+    lac = thulac.thulac(seg_only=True)
+    #seg = pkuseg.pkuseg()
     if request.method == 'POST' :
         data = sqlite3.connect('basis.db')
         c = data.cursor()
@@ -355,7 +359,7 @@ def refresh():
             src_ids_list.append(row_id[0])
         c.close()
         data.close()
-        test = spiderqaq.Spider(src_ids_list)
+        test = spiderqaq.Spider(src_ids_list, lac)
         if test.crawler() :
             return jsonify({'ret' : 0, 'data' : 'SUCCESS'})
 
