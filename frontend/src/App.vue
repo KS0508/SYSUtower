@@ -12,8 +12,14 @@
             <a-tab-pane v-for="tabPos in tabListOrder"
               :key="tabPos"
               :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
-              <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name" @mouseup.middle="onTabMiddleClick(tabPos)">
-                <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
+              <span slot="tab"
+                class="st-tab-text"
+                :title="tabList[tabPos].name"
+                @mouseup.middle="onTabMiddleClick(tabPos)">
+                <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name
+                  ? tabList[tabPos].name
+                  : tabTypes[tabList[tabPos].type].name
+                }}
               </span>
             </a-tab-pane>
             <div slot="tabBarExtraContent">
@@ -74,7 +80,7 @@
 
 <script>
 import { remote, ipcRenderer } from 'electron';
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import Tab from '@/views/Tab.vue';
 
@@ -82,11 +88,6 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(customParseFormat);
-
-async function initializeData() {
-  /* const homeData = await this.$request.api('GET', '/home?limit=6');
-  this.$store.commit('setNewsData', homeData); */
-}
 
 export default {
   components: {
@@ -157,27 +158,28 @@ export default {
         await this.$store.dispatch('subscriptions/fetchHome');
 
         // Find news
-        const new_news = this.$store.state.news.items.filter((news) => {
-          const isNew = dayjs(news.fetchTime, 'YYYY-MM-DD HH:mm:ss').isAfter(this.$store.state.lastRefreshTime);
+        const newNewsList = this.$store.state.news.items.filter((news) => {
+          const isNew = dayjs(news.fetchTime, 'YYYY-MM-DD HH:mm:ss')
+            .isAfter(this.$store.state.lastRefreshTime);
           return isNew;
         });
 
-        if (new_news.length === 1) {
-          const singleNotification = new Notification(new_news[0].title, {
-            body: new_news[0].excerpt,
+        if (newNewsList.length === 1) {
+          const singleNotification = new Notification(newNewsList[0].title, {
+            body: newNewsList[0].excerpt,
           });
           singleNotification.onclick = () => {
             this.$store.commit('addTab', {
               type: 'fullText',
-              name: new_news[0].title,
-              data: new_news[0].id,
+              name: newNewsList[0].title,
+              data: newNewsList[0].id,
             });
             remote.getCurrentWindow().show();
             remote.getCurrentWindow().focus();
           };
-        } else if (new_news.length > 1) {
-          const singleNotification = new Notification(`有 ${new_news.length} 条新的逸仙通知`, {
-            body: new_news.slice(0, 3).map(news => news.title).join('\n'),
+        } else if (newNewsList.length > 1) {
+          const singleNotification = new Notification(`有 ${newNewsList.length} 条新的逸仙通知`, {
+            body: newNewsList.slice(0, 3).map(news => news.title).join('\n'),
           });
           singleNotification.onclick = () => {
             this.$store.commit('addTab', {
@@ -187,8 +189,6 @@ export default {
             remote.getCurrentWindow().focus();
           };
         }
-
-        new_news.forEach(news => console.log(news.title, this.$store.state.lastRefreshTime, news.fetchTime));
         this.$store.commit('updateLastRefreshTime', dayjs());
       } catch (e) {
         this.$message.error(`发生了错误 QwQ：${e}`);

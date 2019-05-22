@@ -33,11 +33,6 @@
 <script>
 import { ipcRenderer } from 'electron';
 
-async function initializeNews() {
-  const newsData = await this.$request.api('GET', `/news/${this.news.id}`);
-  this.news = newsData;
-}
-
 export default {
   props: [
     'tab',

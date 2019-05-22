@@ -5,7 +5,11 @@
     </div>
     <div v-else>
       <div v-if="newsData.length">
-        <news-feed v-for="category in newsData" :count="itemsCount" :key="category.id" :category="category" />
+        <news-feed
+          v-for="category in newsData"
+          :count="itemsCount"
+          :key="category.id"
+          :category="category" />
       </div>
       <div v-else>
         <p>欢迎使用 SYSU Tower 逸仙塔。<br>

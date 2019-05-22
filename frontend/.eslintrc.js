@@ -14,4 +14,13 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint',
   },
+  settings: {
+    'import/core-modules': [
+      'electron',
+      'vue-cli-plugin-electron-builder',
+    ],
+  },
+  globals: {
+    __static: 'readonly',
+  },
 };

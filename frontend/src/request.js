@@ -1,4 +1,4 @@
-const { net, app } = require('electron').remote; // eslint-disable-line import/no-extraneous-dependencies
+const { net } = require('electron').remote;
 
 const ST_HOST = 'localhost';
 let ST_PORT = 0;

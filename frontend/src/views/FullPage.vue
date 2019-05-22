@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
+import { clipboard } from 'electron';
 
 export default {
   props: [
@@ -31,7 +31,7 @@ export default {
       this.$refs.webviewEl.reload();
     },
     doCopy() {
-      require('electron').clipboard.writeText(this.$refs.webviewEl.getURL());
+      clipboard.writeText(this.$refs.webviewEl.getURL());
       this.$message.success('链接已复制 🎉');
     },
     doDebug() {

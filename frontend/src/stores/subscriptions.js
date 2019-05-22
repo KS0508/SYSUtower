@@ -1,4 +1,9 @@
-import dayjs from 'dayjs';
+/* eslint no-shadow: ["error", { "allow": ["state", "getters"] }] */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_vm"] }] */
+/* eslint no-param-reassign: ["error", {
+  "props": true,
+  "ignorePropertyModificationsFor": ["state"],
+}] */
 
 const state = {
   items: [],
@@ -6,35 +11,29 @@ const state = {
 };
 
 const getters = {
-  items: (state, getters, rootState, rootGetters) => state.items.map(sub => ({
+  items: (state, rootGetters) => state.items.map(sub => ({
     ...sub,
     news: rootGetters['news/items'].filter(news => news.sourceID === sub.id),
   })),
 };
 
 const actions = {
-  async fetchSubscription({ state, commit, rootState }) {
+  async fetchSubscription({ commit }) {
     const data = await this._vm.$request.api('GET', '/subscriptions');
     commit('updateSubscriptionData', data);
   },
-  async fetchSubscriptionNews({
-    dispatch, state, commit, rootState,
-  }, id) {
+  async fetchSubscriptionNews({ dispatch }, id) {
     const data = await this._vm.$request.api('GET', `/sources/${id}`);
     dispatch('news/updateNewsList', data.news, { root: true });
   },
-  async fetchHome({
-    dispatch, state, commit, rootState,
-  }) {
+  async fetchHome({ dispatch, commit }) {
     const data = await this._vm.$request.api('GET', '/home?limit=6');
     data.forEach((sub) => {
       dispatch('news/updateNewsList', sub.news, { root: true });
     });
     commit('updateSubscriptionData', data);
   },
-  async addSingleSubscription({
-    dispatch, state, commit, rootState,
-  }, source) {
+  async addSingleSubscription({ commit }, source) {
     commit('addSingleSubscription', source);
     const ret = await this._vm.$request.api('POST', `/subscriptions/${source.id}`);
     if (ret === 'SUCCESS') {
@@ -44,9 +43,7 @@ const actions = {
       this._vm.$message.error(`订阅 ${source.department} - ${source.name} 失败...😥`);
     }
   },
-  async deleteSingleSubscription({
-    dispatch, state, commit, rootState,
-  }, source) {
+  async deleteSingleSubscription({ commit }, source) {
     commit('deleteSingleSubscription', source);
     const ret = await this._vm.$request.api('DELETE', `/subscriptions/${source.id}`);
     if (ret === 'SUCCESS') {

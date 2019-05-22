@@ -1,3 +1,10 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_vm"] }] */
+/* eslint no-param-reassign: ["error", {
+  "props": true,
+  "ignorePropertyModificationsFor": ["state"],
+}] */
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -5,7 +12,6 @@ import dayjs from 'dayjs';
 import favorite from './stores/favorite';
 import news from './stores/news';
 import subscriptions from './stores/subscriptions';
-
 
 Vue.use(Vuex);
 
@@ -129,13 +135,13 @@ export default new Vuex.Store({
       state.lastActiveTab = state.activeTab;
 
       if (existTab) {
-        state.activeTab = existTab[0];
+        [state.activeTab] = existTab;
       } else {
         if (currentTabType.single) {
-          tab.id = `${tab.type}`;
+          tab.id = `${tab.type}`; // eslint-disable-line no-param-reassign
         } else {
           state.tabIncrement += 1;
-          tab.id = `${state.tabIncrement}`;
+          tab.id = `${state.tabIncrement}`; // eslint-disable-line no-param-reassign
         }
         Vue.set(state.tabList, tab.id, tab);
         state.tabListOrder.push(tab.id);

@@ -17,12 +17,6 @@
 </template>
 
 <script>
-async function initializeSource() {
-  const sourceData = await this.$request.api('GET', `/sources/${this.source.id}`);
-  console.log(sourceData);
-  this.source = sourceData;
-}
-
 export default {
   props: [
     'tab',

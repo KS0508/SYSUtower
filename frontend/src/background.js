@@ -1,11 +1,14 @@
 import {
-  app, protocol, BrowserWindow, Menu, Tray, net, dialog, ipcMain,
+  app, protocol, BrowserWindow, Menu, Tray, dialog, ipcMain,
 } from 'electron';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
+
 import path from 'path';
+// eslint-disable-next-line camelcase
 import child_process from 'child_process';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -17,7 +20,6 @@ app.setAppUserModelId(process.execPath);
 let win;
 let tray;
 let backendPs;
-let isQuitting = false;
 let prepareDownloadInfo = {};
 
 // Scheme must be registered before the app is ready
@@ -73,7 +75,7 @@ function createWindow() {
     win = null;
   });
 
-  win.webContents.session.on('will-download', (event, item, webContents) => {
+  win.webContents.session.on('will-download', (event, item) => {
     if (item.getURL() === prepareDownloadInfo.url) {
       if (path.extname(prepareDownloadInfo.name) === '') {
         const urlFileName = (new URL(prepareDownloadInfo.url)).pathname;
@@ -92,8 +94,7 @@ function createWindow() {
   });
 }
 
-app.on('before-quit', (event) => {
-  isQuitting = true;
+app.on('before-quit', () => {
   if (tray && !tray.isDestroyed()) {
     tray.destroy();
   }
@@ -158,6 +159,7 @@ app.on('ready', async () => {
 
   ipcMain.on('prepareDownload', (event, download) => {
     prepareDownloadInfo = download;
+    // eslint-disable-next-line no-param-reassign
     event.returnValue = true;
   });
 
@@ -172,7 +174,6 @@ app.on('ready', async () => {
     {
       label: '退出应用',
       click: () => {
-        isQuitting = true;
         app.quit();
       },
     },

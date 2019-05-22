@@ -1,17 +1,26 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_vm"] }] */
+/* eslint no-param-reassign: ["error", {
+  "props": true,
+  "ignorePropertyModificationsFor": ["state"],
+}] */
+
 const state = {
   items: [],
 };
 
 const getters = {
-  items: (state, getters, rootState) => state.items.map(fav => rootState.news.items.find(news => news.id === fav)),
+  items: (state, rootState) => state.items
+    .map(fav => rootState.news.items
+      .find(news => news.id === fav)),
 };
 
 const actions = {
-  async fetchFavorite({ state, commit, rootState }) {
+  async fetchFavorite({ commit }) {
     const data = await this._vm.$request.api('GET', '/favorites');
     commit('updateFavoriteData', data.map(fav => fav.id));
   },
-  async addSingleFavorite({ state, commit, rootState }, id) {
+  async addSingleFavorite({ commit }, id) {
     commit('addSingleFavorite', id);
     const data = await this._vm.$request.api('POST', `/favorites/${id}`);
     if (data === 'SUCCESS') {
@@ -21,7 +30,7 @@ const actions = {
       commit('deleteSingleFavorite', id);
     }
   },
-  async deleteSingleFavorite({ state, commit, rootState }, id) {
+  async deleteSingleFavorite({ commit }, id) {
     commit('deleteSingleFavorite', id);
     const data = await this._vm.$request.api('DELETE', `/favorites/${id}`);
     if (data === 'SUCCESS') {

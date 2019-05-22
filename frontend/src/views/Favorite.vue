@@ -24,11 +24,6 @@
 </template>
 
 <script>
-async function initializeFavorite() {
-  const favoriteData = await this.$request.api('GET', '/favorites');
-  this.favorite = favoriteData;
-}
-
 export default {
   props: [
     'tab',
