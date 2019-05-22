@@ -12,7 +12,7 @@ const state = {
 };
 
 const getters = {
-  items: (state, rootState) => state.items.map(news => ({
+  items: (state, _getters, rootState) => state.items.map(news => ({
     ...news,
     is_favorite: rootState.favorite.items.indexOf(news.id) !== -1,
   })),
