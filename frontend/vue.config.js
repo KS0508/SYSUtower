@@ -6,8 +6,8 @@ module.exports = {
         productName: 'SYSUTower',
         win: {
           target: 'portable',
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};

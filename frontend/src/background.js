@@ -132,14 +132,14 @@ app.on('ready', async () => {
   ipcMain.once('startBackendServer', async (event) => {
     let backendStdOut = '';
 
-    backendPs = child_process.spawn(isDevelopment ? 
-      path.join(__static, '../../dist/SYSU_Tower/SYSU_Tower_Server.exe') :
-      path.join(process.execPath, '../SYSU_Tower_Server.exe'), {
-        cwd: isDevelopment ? 
-          path.join(__static, '../../dist/SYSU_Tower/') : 
-          path.join(process.execPath, '../'),
-      });
-    
+    backendPs = child_process.spawn(isDevelopment
+      ? path.join(__static, '../../dist/SYSU_Tower/SYSU_Tower_Server.exe')
+      : path.join(process.execPath, '../SYSU_Tower_Server.exe'), {
+      cwd: isDevelopment
+        ? path.join(__static, '../../dist/SYSU_Tower/')
+        : path.join(process.execPath, '../'),
+    });
+
     function monitorStdOut(data) {
       backendStdOut += data;
       const stdOutMatch = backendStdOut.match(/Running on http:\/\/127.0.0.1:(\d+?)\//);
@@ -154,7 +154,7 @@ app.on('ready', async () => {
     app.on('before-quit', () => {
       backendPs.kill();
     });
-  })
+  });
 
   ipcMain.on('prepareDownload', (event, download) => {
     prepareDownloadInfo = download;

@@ -5,7 +5,7 @@ let ST_PORT = 0;
 
 export default function install(Vue) {
   Vue.prototype.$request = { // eslint-disable-line no-param-reassign
-    init (port) {
+    init(port) {
       ST_PORT = port;
     },
     async api(method, url) {

@@ -12,7 +12,7 @@
             <a-tab-pane v-for="tabPos in tabListOrder"
               :key="tabPos"
               :closable="!tabTypes[tabList[tabPos].type].prohibitClose">
-              <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name">
+              <span slot="tab" class="st-tab-text" :title="tabList[tabPos].name" @mouseup.middle="onTabMiddleClick(tabPos)">
                 <a-icon :type="tabTypes[tabList[tabPos].type].icon" />{{ tabList[tabPos].name ? tabList[tabPos].name : tabTypes[tabList[tabPos].type].name }}
               </span>
             </a-tab-pane>
@@ -136,6 +136,11 @@ export default {
         this.$store.commit('removeTab', key);
       }
     },
+    onTabMiddleClick(key) {
+      if (key !== 'home') {
+        this.onTabEdit(key, 'remove');
+      }
+    },
     debug(type) {
       console.log(type);
     },
@@ -172,7 +177,7 @@ export default {
           };
         } else if (new_news.length > 1) {
           const singleNotification = new Notification(`有 ${new_news.length} 条新的逸仙通知`, {
-            body: '点击此处查看',
+            body: new_news.slice(0, 3).map(news => news.title).join('\n'),
           });
           singleNotification.onclick = () => {
             this.$store.commit('addTab', {
@@ -222,7 +227,7 @@ export default {
       setTimeout(() => {
         this.doAutoRefresh.call(this);
       }, 1800000);
-    })
+    });
     ipcRenderer.send('startBackendServer');
   },
 };
@@ -259,7 +264,7 @@ export default {
   height: 100%;
 }
 .ant-spin-nested-loading > div > .ant-spin {
-  max-height: 100%; 
+  max-height: 100%;
 }
 
 .st-tab-text {
