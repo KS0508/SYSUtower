@@ -7,8 +7,8 @@ a = Analysis(['client.py'],
              binaries=[],
              datas=[
                ('basis.db', '.'),
-               ('C:/Python37/Lib/site-packages/jieba/dict.txt', 'jieba'),
-               ('C:/Python37/Lib/site-packages/jieba/analyse/idf.txt', 'jieba/analyse')
+               ('C:/Develop/Python/Lib/site-packages/jieba/dict.txt', 'jieba'),
+               ('C:/Develop/Python/Lib/site-packages/jieba/analyse/idf.txt', 'jieba/analyse')
              ],
              hiddenimports=['jieba'],
              hookspath=[],
@@ -35,7 +35,7 @@ coll = COLLECT(exe,
                a.zipfiles,
                a.datas,
                Tree('./frontend/dist_electron/win-unpacked'),
-               Tree('C:/Python37/Lib/site-packages/thulac/models/', prefix='THUmodel/'),
+               Tree('C:/Develop/Python/Lib/site-packages/thulac/models/', prefix='THUmodel/'),
                strip=False,
                upx=True,
                name='SYSU_Tower')
