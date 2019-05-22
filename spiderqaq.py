@@ -6,10 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 import time
-import pandas as pd
 import database
-import aiohttp
-import asyncio
 import urllib3
 import operator
 

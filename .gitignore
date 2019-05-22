@@ -1,0 +1,9 @@
+database.db
+test.db
+fake_database.js
+fake_database.json
+home_example.json
+__pycache__/
+build/
+dist/
+mock-server/

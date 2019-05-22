@@ -10,7 +10,7 @@ const state = {
 };
 
 const getters = {
-  items: (state, rootState) => state.items
+  items: (state, _getters, rootState) => state.items
     .map(fav => rootState.news.items
       .find(news => news.id === fav)),
 };
