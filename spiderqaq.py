@@ -181,16 +181,6 @@ class Spider():
             attachments1['att_name']=file.text
             attachments1['att_address']=file['href']
             attachments.append(attachments1)
-        for file in soup.find_all(href=re.compile(r".xlsx")):
-            attachments1={}
-            attachments1['att_name']=file.text
-            attachments1['att_address']=file['href']
-            attachments.append(attachments1)
-        for file in soup.find_all(href=re.compile(r".docx")):
-            attachments1={}
-            attachments1['att_name']=file.text
-            attachments1['att_address']=file['href']
-            attachments.append(attachments1)
         sorted(attachments,key=operator.itemgetter('att_name'))
         return attachments
 
@@ -225,7 +215,7 @@ class Spider():
         articleall=' '.join(article)
         news_info['news_abstract']=articleall
         news_info['fetch_time']=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        news_info['attachments']=self.catch_attachment_list1(URL)
+        news_info['attachments']=self.catch_attachment_list(URL)
         return news_info
 
     def crawler(self):
