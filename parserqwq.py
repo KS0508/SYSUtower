@@ -33,9 +33,8 @@ def find_abstract(sentences, cutting_model, model_name, limit=3, alpha=0.85):
     for sent in sentences:
         if model_name == 'THU':
             current_sentence_wordcut = cutting_model.cut(sent, text=True)
-        elif model_name == 'PKU'
+        elif model_name == 'PKU':
             current_sentence_wordcut = cutting_model.cut(sent)
-        current_sentence_wordcut = cutting_model.cut(sent, text=True)
         wordlist.append(current_sentence_wordcut)
     for x in range(sentences_num):
         for y in range(x, sentences_num):
@@ -56,11 +55,11 @@ def find_keyword(full_text, limit=3):
     keywords = jieba.analyse.textrank(full_text,topK=limit)
     return keywords
 
-def parse(news_title, news_text, cutting_model):
+def parse(news_title, news_text, cutting_model, model_name):
     news_keyword_1 = find_keyword(news_title)
     news_keyword_2 = find_keyword(news_text)
     news_keyword = list(set(news_keyword_1).union(set(news_keyword_2)))
     news_keyword_str = '，'.join(news_keyword)
     news_sentences_list = split_sentence(news_text)
-    news_abstract = find_abstract(news_sentences_list, cutting_model)
+    news_abstract = find_abstract(news_sentences_list, cutting_model, model_name)
     return [news_abstract, news_keyword_str]
