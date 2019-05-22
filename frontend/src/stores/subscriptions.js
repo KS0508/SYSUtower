@@ -11,7 +11,7 @@ const state = {
 };
 
 const getters = {
-  items: (state, rootGetters) => state.items.map(sub => ({
+  items: (state, _getters, _rootState, rootGetters) => state.items.map(sub => ({
     ...sub,
     news: rootGetters['news/items'].filter(news => news.sourceID === sub.id),
   })),
