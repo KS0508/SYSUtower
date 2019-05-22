@@ -2,15 +2,13 @@
 
 block_cipher = None
 
-
 a = Analysis(['client.py'],
              pathex=['.'],
              binaries=[],
              datas=[
                ('basis.db', '.'),
                ('C:/Python37/Lib/site-packages/jieba/dict.txt', 'jieba'),
-               ('C:/Python37/Lib/site-packages/jieba/analyse/idf.txt', 'jieba/analyse'),
-               # ('C:/Python37/LiB/site-packages/pkuseg/dicts/default.pkl', 'pkuseg/dicts')
+               ('C:/Python37/Lib/site-packages/jieba/analyse/idf.txt', 'jieba/analyse')
              ],
              hiddenimports=['jieba'],
              hookspath=[],
@@ -38,7 +36,6 @@ coll = COLLECT(exe,
                a.datas,
                Tree('./frontend/dist_electron/win-unpacked'),
                Tree('C:/Python37/Lib/site-packages/thulac/models/', prefix='THUmodel/'),
-               # Tree('./PKUmodel/', prefix='PKUmodel/'),
                strip=False,
                upx=True,
                name='SYSU_Tower')
