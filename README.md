@@ -4,11 +4,15 @@ SYSU Tower（逸仙塔），一个能够抓取并推送中大新闻通知的消�
 
 [![SYSUtower_home.png](https://i.loli.net/2019/05/23/5ce6665c4b3be80298.png)](https://i.loli.net/2019/05/23/5ce6665c4b3be80298.png)
 
-欢迎试用！（大佬们轻拍
+## 快速了解
 
-您可以点击[此处下载编译好的版本](https://github.com/KS0508/SYSUtower/releases/download/v1.0/SYSU_Tower_x64.7z)，解压缩之后运行目录下的 `SYSUTower.exe` 即可开始使用。
+戳此查看演示视频：[BiliBili 在线观看](https://www.bilibili.com/video/av53353945/)
 
-或者，您也可以根据我们提供的[编译指南](https://github.com/KS0508/SYSUtower/wiki/Build-Guide)自行根据[源代码](https://github.com/KS0508/SYSUtower/archive/master.zip)进行编译。
+戳此查看简要技术介绍 PPT: [GitHub 在线查看](https://github.com/KS0508/SYSUtower/blob/master/doc/SYSU%20Tower%20%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pdf)
+
+功能介绍请继续往下看 ↓ （大佬们轻拍
+
+或者想要自己体验一下？您可以点击[此处下载编译好的版本](https://github.com/KS0508/SYSUtower/releases/download/v1.0/SYSU_Tower_x64.7z)，解压缩之后运行目录下的 `SYSUTower.exe` 即可开始使用。大佬也可以根据我们提供的[编译指南](https://github.com/KS0508/SYSUtower/wiki/Build-Guide)自行根据[源代码](https://github.com/KS0508/SYSUtower/archive/master.zip)进行编译。
 
 ## 功能特色
 
@@ -36,9 +40,9 @@ SYSU Tower（逸仙塔），一个能够抓取并推送中大新闻通知的消�
 
 [![SYSUtower_attachment_download.png](https://i.loli.net/2019/05/23/5ce6681d4d19525721.png)](https://i.loli.net/2019/05/23/5ce6681d4d19525721.png)
 
-## 详细介绍
+## 相关介绍文件下载
 
-[功能介绍 PPT 下载](https://github.com/KS0508/SYSUtower/blob/master/doc/SYSU%20Tower%20%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pptx?raw=true)
+[简要介绍 PPT 下载](https://github.com/KS0508/SYSUtower/blob/master/doc/SYSU%20Tower%20%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.pptx?raw=true)
 
 [使用演示 视频 下载](https://github.com/KS0508/SYSUtower/blob/master/doc/%E4%BD%BF%E7%94%A8%E5%BD%95%E5%83%8F.mp4?raw=true)
 
