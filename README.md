@@ -20,15 +20,19 @@ SYSU Tower（逸仙塔），一个能够抓取并推送中大新闻通知的消�
 
 [![SYSUtower_notification.png](https://i.loli.net/2019/05/23/5ce6672783ac481905.png)](https://i.loli.net/2019/05/23/5ce6672783ac481905.png)
 
-3. 新闻收藏
+3. 标签页式设计
+
+[![SYSUtower_full_text.png](https://i.loli.net/2019/05/23/5ce66d3d2562f99712.png)](https://i.loli.net/2019/05/23/5ce66d3d2562f99712.png)
+
+4. 新闻收藏
 
 [![SYSUtower_favorites.png](https://i.loli.net/2019/05/23/5ce6674410a6453779.png)](https://i.loli.net/2019/05/23/5ce6674410a6453779.png)
 
-4. 自动生成新闻关键字和摘要
+5. 自动生成新闻关键字和摘要
 
 [![SYSUtower_home_single.png](https://i.loli.net/2019/05/23/5ce667e5bb05c61223.png)](https://i.loli.net/2019/05/23/5ce667e5bb05c61223.png)
 
-5. 附件下载智能更名
+6. 附件下载智能更名
 
 [![SYSUtower_attachment_download.png](https://i.loli.net/2019/05/23/5ce6681d4d19525721.png)](https://i.loli.net/2019/05/23/5ce6681d4d19525721.png)
 
