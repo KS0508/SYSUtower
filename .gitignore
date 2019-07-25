@@ -6,4 +6,5 @@ home_example.json
 __pycache__/
 build/
 dist/
+frontend/
 mock-server/
